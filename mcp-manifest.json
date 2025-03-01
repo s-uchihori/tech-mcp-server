@@ -1,0 +1,52 @@
+{
+  "name": "簡単なMCPサーバー",
+  "version": "1.0.0",
+  "description": "Roo Codeのための簡単なMCPサーバー",
+  "baseUrl": "http://localhost:3000",
+  "manifestPath": "/manifest.json",
+  "tools": [
+    {
+      "name": "hello_world",
+      "description": "挨拶を返すシンプルなツール",
+      "parameters": [
+        {
+          "name": "name",
+          "type": "string",
+          "description": "挨拶する相手の名前",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "calculate",
+      "description": "簡単な計算を行うツール",
+      "parameters": [
+        {
+          "name": "operation",
+          "type": "string",
+          "description": "実行する演算（add, subtract, multiply, divide）",
+          "required": true
+        },
+        {
+          "name": "a",
+          "type": "number",
+          "description": "最初の数値",
+          "required": true
+        },
+        {
+          "name": "b",
+          "type": "number",
+          "description": "2番目の数値",
+          "required": true
+        }
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "name": "help",
+      "description": "MCPサーバーの使用方法",
+      "url": "/help"
+    }
+  ]
+}
