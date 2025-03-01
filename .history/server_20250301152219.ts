@@ -12,6 +12,7 @@ import {
   ErrorCode,
   McpError,
 } from "npm:@modelcontextprotocol/sdk@1.5.0/types.js";
+import { Octokit } from "npm:octokit@3.1.2";
 
 const TOOLS: Tool[] = [
   {
@@ -23,6 +24,21 @@ const TOOLS: Tool[] = [
         input: { type: "string", description: "The input string" },
       },
       required: ["input"],
+    },
+  },
+  {
+    name: "getGitHubRepoInfo",
+    description: "Get information about a GitHub repository",
+    inputSchema: {
+      type: "object",
+      properties: {
+        owner: {
+          type: "string",
+          description: "Repository owner (username or organization)",
+        },
+        repo: { type: "string", description: "Repository name" },
+      },
+      required: ["owner", "repo"],
     },
   },
 ];
