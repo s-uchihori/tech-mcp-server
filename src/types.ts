@@ -36,6 +36,19 @@ export interface GitHubCommitsArgs extends GitHubRepoArgs {
   per_page?: number;
 }
 
+export interface GitHubPullRequestsArgs extends GitHubRepoArgs {
+  state?: string;
+  sort?: string;
+  direction?: string;
+  per_page?: number;
+  since?: string;
+  created_after?: string;
+  created_before?: string;
+  updated_after?: string;
+  updated_before?: string;
+  compact?: boolean; // コンパクトモード（デフォルトtrue）
+}
+
 // ツールレスポンスの型定義
 export interface ToolResponse {
   content: {

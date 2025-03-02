@@ -7,10 +7,14 @@ import {
   getGitHubRepoContentsTool,
   getGitHubIssuesTool,
   getGitHubCommitsTool,
+  getGitHubPullRequestsTool,
+  getGitHubUserInfoTool,
   handleGetGitHubRepoInfo,
   handleGetGitHubRepoContents,
   handleGetGitHubIssues,
   handleGetGitHubCommits,
+  handleGetGitHubPullRequests,
+  handleGetGitHubUserInfo,
 } from "./github-tools.ts";
 import { Tool } from "npm:@modelcontextprotocol/sdk@1.5.0/types.js";
 
@@ -21,6 +25,8 @@ export const TOOLS: Tool[] = [
   getGitHubRepoContentsTool,
   getGitHubIssuesTool,
   getGitHubCommitsTool,
+  getGitHubPullRequestsTool,
+  getGitHubUserInfoTool,
 ];
 
 // ツールハンドラーのエクスポート
@@ -30,6 +36,8 @@ export {
   handleGetGitHubRepoContents,
   handleGetGitHubIssues,
   handleGetGitHubCommits,
+  handleGetGitHubPullRequests,
+  handleGetGitHubUserInfo,
 };
 
 // ツール名とハンドラーのマッピング
@@ -39,4 +47,6 @@ export const toolHandlers = {
   getGitHubRepoContents: handleGetGitHubRepoContents,
   getGitHubIssues: handleGetGitHubIssues,
   getGitHubCommits: handleGetGitHubCommits,
+  getGitHubPullRequests: handleGetGitHubPullRequests,
+  getGitHubUserInfo: handleGetGitHubUserInfo,
 };

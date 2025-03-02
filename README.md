@@ -111,7 +111,13 @@ GitHub リポジトリのコミット履歴を取得するツール
   "mcpServers": {
     "local": {
       "command": "deno",
-      "args": ["run", "--allow-net", "--allow-env", "/path/to/src/server.ts"],
+      "args": [
+        "run",
+        "--allow-net",
+        "--allow-env",
+        "--allow-read",
+        "/path/to/src/server.ts"
+      ],
       "env": {},
       "disabled": false,
       "alwaysAllow": []

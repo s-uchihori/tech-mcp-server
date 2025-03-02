@@ -6,6 +6,37 @@ import {
   ListResourcesRequestSchema,
   ListToolsRequestSchema,
 } from "npm:@modelcontextprotocol/sdk@1.5.0/types.js";
+import { load } from "https://deno.land/std/dotenv/mod.ts";
+
+// .envファイルから環境変数を読み込む
+try {
+  // .envファイルを読み込む
+  const envText = await Deno.readTextFile("./.env");
+
+  // dotenvモジュールを使用して環境変数を読み込む
+  await load({ export: true, defaults: false });
+
+  // 環境変数が正しく設定されているか確認
+  const githubToken = Deno.env.get("GITHUB_TOKEN");
+  if (githubToken) {
+    console.error("GITHUB_TOKENが正常に読み込まれました");
+  } else {
+    console.error("警告: GITHUB_TOKENが見つかりません");
+
+    // 手動で環境変数を設定（重要：これを削除すると404エラーが発生する可能性があります）
+    const tokenFromEnvFile = envText
+      .split("\n")
+      .find((line) => line.startsWith("GITHUB_TOKEN="))
+      ?.split("=")[1];
+
+    if (tokenFromEnvFile) {
+      Deno.env.set("GITHUB_TOKEN", tokenFromEnvFile);
+      console.error("GITHUB_TOKENを手動で設定しました");
+    }
+  }
+} catch (error) {
+  console.error(".envファイルの読み込みに失敗しました:", error);
+}
 
 import { TOOLS } from "./tools/index.ts";
 import {
@@ -29,6 +60,8 @@ const server = new Server(
         getGitHubRepoContents: TOOLS[2],
         getGitHubIssues: TOOLS[3],
         getGitHubCommits: TOOLS[4],
+        getGitHubPullRequests: TOOLS[5],
+        getGitHubUserInfo: TOOLS[6],
       },
     },
   }
