@@ -1,10 +1,11 @@
-# Roo MCP サーバー
+# Tech MCP サーバー
 
-これは、Roo Code のための MCP サーバーです。このサーバーは、基本的なツールを提供します。
+これは、Claude、CursorやRoo Code のための MCP サーバーです。このサーバーは、基本的なツールを提供します。
 
 ## 前提条件
 
 - [Deno](https://deno.com/) がインストールされていること
+- Denoの環境構築は[DENO_SETUP.md](https://github.com/taka-ganasu/roo-mcp-server/blob/main/DENO_SETUP.md)を参照
 
 ## 起動方法
 
@@ -23,11 +24,11 @@ deno task dev
 deno task test
 ```
 
-## 提供するツール
+## 提供するツール （v0.6）
 
 ### 基本ツール
 
-- getStringLength - 文字列の長さを返すツール
+- getStringLength - 文字列の長さを返すツール（動作確認用）
 
 ### GitHub 関連ツール
 
