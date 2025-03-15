@@ -184,6 +184,8 @@ function extractIssueEssentialData(issue: any): any {
     issueType: issue.fields?.issuetype
       ? { name: issue.fields.issuetype.name }
       : null,
+    // ストーリーポイントを追加
+    storyPoints: issue.fields?.customfield_10016 || null,
   };
 }
 
