@@ -3,6 +3,12 @@
 
 import { getStringLengthTool, handleGetStringLength } from "./string-tools.ts";
 import {
+  googleCalendarGetEventsTool,
+  googleCalendarCreateEventTool,
+  handleGoogleCalendarGetEvents,
+  handleGoogleCalendarCreateEvent,
+} from "./google-calendar-tools.ts";
+import {
   slackListChannelsTool,
   slackPostMessageTool,
   slackUserConversationsTool,
@@ -75,6 +81,10 @@ export const TOOLS: Tool[] = [
   slackUserConversationsTool,
   slackGetChannelHistoryTool,
   slackGetThreadRepliesTool,
+
+  // Google Calendarツール
+  googleCalendarGetEventsTool,
+  googleCalendarCreateEventTool,
 ];
 
 // ツールハンドラーのエクスポート
@@ -106,6 +116,10 @@ export {
   handleSlackUserConversations,
   handleSlackGetChannelHistory,
   handleSlackGetThreadReplies,
+
+  // Google Calendarツールハンドラー
+  handleGoogleCalendarGetEvents,
+  handleGoogleCalendarCreateEvent,
 };
 
 // ツール名とハンドラーのマッピング
@@ -137,4 +151,8 @@ export const toolHandlers = {
   slack_user_conversations: handleSlackUserConversations,
   slack_get_channel_history: handleSlackGetChannelHistory,
   slack_get_thread_replies: handleSlackGetThreadReplies,
+
+  // Google Calendarツール
+  google_calendar_get_events: handleGoogleCalendarGetEvents,
+  google_calendar_create_event: handleGoogleCalendarCreateEvent,
 };

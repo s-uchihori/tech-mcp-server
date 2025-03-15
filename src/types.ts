@@ -3,6 +3,46 @@
 
 import { Tool } from "npm:@modelcontextprotocol/sdk@1.5.0/types.js";
 
+// Google Calendar関連の型定義
+export interface GoogleCalendarEventArgs {
+  calendarId?: string;
+  timeMin?: string;
+  timeMax?: string;
+  maxResults?: number;
+  q?: string;
+  singleEvents?: boolean;
+  orderBy?: string;
+  filterByAttendees?: boolean; // 参加者が自分以外にいる予定に絞るフラグ
+  compact?: boolean;
+  compact_json?: boolean;
+}
+
+export interface GoogleCalendarCreateEventArgs {
+  calendarId?: string;
+  summary: string;
+  description?: string;
+  location?: string;
+  start: {
+    dateTime: string;
+    timeZone?: string;
+  };
+  end: {
+    dateTime: string;
+    timeZone?: string;
+  };
+  attendees?: Array<{
+    email: string;
+    optional?: boolean;
+  }>;
+  reminders?: {
+    useDefault?: boolean;
+    overrides?: Array<{
+      method: string;
+      minutes: number;
+    }>;
+  };
+}
+
 // Slack関連の型定義
 export interface SlackListChannelsArgs {
   limit?: number;
