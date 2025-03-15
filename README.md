@@ -25,283 +25,45 @@ deno task test
 
 ## 提供するツール
 
-### getStringLength
+### 基本ツール
 
-文字列の長さを返すツール
+- getStringLength - 文字列の長さを返すツール
 
-**パラメータ:**
+### GitHub 関連ツール
 
-- `input` (string, 必須): 長さを計算する文字列
+- getGitHubRepoInfo - GitHub リポジトリの情報を取得するツール
+- getGitHubRepoContents - GitHub リポジトリのコンテンツ（ファイルやディレクトリ）を取得するツール
+- getGitHubIssues - GitHub リポジトリのイシューを取得するツール
+- getGitHubCommits - GitHub リポジトリのコミット履歴を取得するツール
+- getGitHubPullRequests - GitHub リポジトリのプルリクエストを取得するツール
+- getGitHubUserInfo - 認証された GitHub ユーザーの情報を取得するツール
 
-**使用例:**
+### JIRA 関連ツール
 
-```
-use_mcp_tool(
-  server_name="local",
-  tool_name="getStringLength",
-  arguments={
-    "input": "こんにちは世界"
-  }
-)
-```
+- getJiraProjectInfo - JIRA プロジェクトの情報を取得するツール
+- getJiraIssue - JIRA チケットの情報を取得するツール
+- searchJiraIssues - JQL を使用して JIRA チケットを検索するツール
+- getJiraProjectIssues - JIRA プロジェクトのチケット一覧を取得するツール
 
-### getGitHubRepoInfo
+### Slack 関連ツール
 
-GitHub リポジトリの情報を取得するツール
+- slack_list_channels - Slack ワークスペースの公開チャンネル一覧を取得するツール
+- slack_post_message - Slack チャンネルに新しいメッセージを投稿するツール
+- slack_user_conversations - ユーザーがメンバーになっているチャンネル一覧を取得するツール
+- slack_get_channel_history - チャンネル名から会話履歴を取得するツール
+- slack_get_thread_replies - チャンネル名とスレッドタイムスタンプからスレッド返信を取得するツール
 
-**パラメータ:**
+### インテグレーションツール
 
-- `owner` (string, 必須): リポジトリのオーナー（ユーザー名または組織名）
-- `repo` (string, 必須): リポジトリ名
-
-**使用例:**
-
-```
-use_mcp_tool(
-  server_name="local",
-  tool_name="getGitHubRepoInfo",
-  arguments={
-    "owner": "denoland",
-    "repo": "deno"
-  }
-)
-```
-
-### getGitHubRepoContents
-
-GitHub リポジトリのコンテンツ（ファイルやディレクトリ）を取得するツール
-
-**パラメータ:**
-
-- `owner` (string, 必須): リポジトリのオーナー（ユーザー名または組織名）
-- `repo` (string, 必須): リポジトリ名
-- `path` (string, オプション): ファイルまたはディレクトリのパス（デフォルト: ルートディレクトリ）
-- `ref` (string, オプション): コミット/ブランチ/タグの名前（デフォルト: デフォルトブランチ）
-
-### getGitHubIssues
-
-GitHub リポジトリのイシューを取得するツール
-
-**パラメータ:**
-
-- `owner` (string, 必須): リポジトリのオーナー（ユーザー名または組織名）
-- `repo` (string, 必須): リポジトリ名
-- `state` (string, オプション): イシューの状態（open, closed, all）（デフォルト: open）
-- `per_page` (number, オプション): 取得するイシューの数（最大: 100）（デフォルト: 30）
-
-### getGitHubCommits
-
-GitHub リポジトリのコミット履歴を取得するツール
-
-**パラメータ:**
-
-- `owner` (string, 必須): リポジトリのオーナー（ユーザー名または組織名）
-- `repo` (string, 必須): リポジトリ名
-- `path` (string, オプション): コミットをフィルタするパス（デフォルト: すべてのファイル）
-- `per_page` (number, オプション): 取得するコミットの数（最大: 100）（デフォルト: 30）
-
-### getGitHubPullRequests
-
-GitHub リポジトリのプルリクエストを取得するツール
-
-**パラメータ:**
-
-- `owner` (string, 必須): リポジトリのオーナー（ユーザー名または組織名）
-- `repo` (string, 必須): リポジトリ名
-- `state` (string, オプション): プルリクエストの状態（open, closed, all）（デフォルト: open）
-- `sort` (string, オプション): 結果のソート方法（created, updated, popularity, long-running）（デフォルト: created）
-- `direction` (string, オプション): ソートの方向（asc, desc）（デフォルト: desc）
-- `per_page` (number, オプション): 取得するプルリクエストの数（最大: 100）（デフォルト: 10）
-- `since` (string, オプション): 指定した日時以降に更新されたプルリクエストのみを取得（ISO 8601 形式、例: 2023-01-01T00:00:00Z）
-- `created_after` (string, オプション): 指定した日時以降に作成されたプルリクエストのみを取得（ISO 8601 形式）
-- `created_before` (string, オプション): 指定した日時以前に作成されたプルリクエストのみを取得（ISO 8601 形式）
-- `updated_after` (string, オプション): 指定した日時以降に更新されたプルリクエストのみを取得（ISO 8601 形式）
-- `updated_before` (string, オプション): 指定した日時以前に更新されたプルリクエストのみを取得（ISO 8601 形式）
-- `compact` (boolean, オプション): 必須フィールドのみのコンパクトなデータを返す（デフォルト: true）
-
-**使用例:**
-
-```
-use_mcp_tool(
-  server_name="local",
-  tool_name="getGitHubPullRequests",
-  arguments={
-    "owner": "denoland",
-    "repo": "deno",
-    "state": "open",
-    "sort": "updated",
-    "per_page": 5
-  }
-)
-```
-
-### getGitHubUserInfo
-
-認証された GitHub ユーザーの情報を取得するツール
-
-**パラメータ:**
-
-- なし
-
-**使用例:**
-
-```
-use_mcp_tool(
-  server_name="local",
-  tool_name="getGitHubUserInfo",
-  arguments={}
-)
-```
-
-## JIRA 関連ツール
-
-### getJiraProjectInfo
-
-JIRA プロジェクトの情報を取得するツール
-
-**パラメータ:**
-
-- `projectKey` (string, 必須): JIRA プロジェクトキー（例: 'PROJ'）
-
-**使用例:**
-
-```
-use_mcp_tool(
-  server_name="local",
-  tool_name="getJiraProjectInfo",
-  arguments={
-    "projectKey": "PROJ"
-  }
-)
-```
-
-### getJiraIssue
-
-JIRA チケットの情報を取得するツール
-
-**パラメータ:**
-
-- `issueKey` (string, 必須): JIRA チケットキー（例: 'PROJ-123'）
-
-**使用例:**
-
-```
-use_mcp_tool(
-  server_name="local",
-  tool_name="getJiraIssue",
-  arguments={
-    "issueKey": "PROJ-123"
-  }
-)
-```
-
-### searchJiraIssues
-
-JQL を使用して JIRA チケットを検索するツール
-
-**パラメータ:**
-
-- `jql` (string, 必須): JQL クエリ文字列
-- `maxResults` (number, オプション): 取得する結果の最大数（デフォルト: 50）
-- `fields` (array, オプション): レスポンスに含めるフィールド
-
-**使用例:**
-
-```
-use_mcp_tool(
-  server_name="local",
-  tool_name="searchJiraIssues",
-  arguments={
-    "jql": "project = PROJ AND status = 'In Progress'",
-    "maxResults": 20
-  }
-)
-```
-
-### getJiraProjectIssues
-
-JIRA プロジェクトのチケット一覧を取得するツール
-
-**パラメータ:**
-
-- `projectKey` (string, 必須): JIRA プロジェクトキー（例: 'PROJ'）
-- `status` (string, オプション): ステータスでフィルタリング（例: 'Done', 'In Progress'）
-- `maxResults` (number, オプション): 取得する結果の最大数（デフォルト: 50）
-
-**使用例:**
-
-```
-use_mcp_tool(
-  server_name="local",
-  tool_name="getJiraProjectIssues",
-  arguments={
-    "projectKey": "PROJ",
-    "status": "In Progress",
-    "maxResults": 30
-  }
-)
-```
-
-## インテグレーションツール
-
-### mapGitHubPrToJiraIssues
-
-GitHub のプルリクエストと JIRA チケットをマッピングするツール
-
-**パラメータ:**
-
-- `owner` (string, 必須): GitHub リポジトリのオーナー（ユーザー名または組織名）
-- `repo` (string, 必須): GitHub リポジトリ名
-- `projectKey` (string, 必須): フィルタリングする JIRA プロジェクトキー（例: 'PROJ'）
-- `since` (string, オプション): 指定した日時以降に更新された PR のみを含める（ISO 8601 形式）
-- `maxResults` (number, オプション): 処理する PR の最大数（デフォルト: 30）
-
-**使用例:**
-
-```
-use_mcp_tool(
-  server_name="local",
-  tool_name="mapGitHubPrToJiraIssues",
-  arguments={
-    "owner": "denoland",
-    "repo": "deno",
-    "projectKey": "PROJ",
-    "maxResults": 20
-  }
-)
-```
-
-### generateDashboardSummary
-
-開発状況のダッシュボードサマリーを生成するツール
-
-**パラメータ:**
-
-- `owner` (string, 必須): GitHub リポジトリのオーナー（ユーザー名または組織名）
-- `repos` (array, 必須): GitHub リポジトリ名のリスト
-- `projectKeys` (array, 必須): JIRA プロジェクトキーのリスト
-- `period` (string, オプション): サマリーの期間（day, week, month, quarter, year）（デフォルト: month）
-
-**使用例:**
-
-```
-use_mcp_tool(
-  server_name="local",
-  tool_name="generateDashboardSummary",
-  arguments={
-    "owner": "denoland",
-    "repos": ["deno", "deno_std"],
-    "projectKeys": ["PROJ", "DOC"],
-    "period": "month"
-  }
-)
-```
+- mapGitHubPrToJiraIssues - GitHub のプルリクエストと JIRA チケットをマッピングするツール
+- generateDashboardSummary - 開発状況のダッシュボードサマリーを生成するツール
 
 ## Roo Code への登録方法
 
 1. サーバーを起動します: `deno task start`
 2. Roo Cline の設定ファイルを編集します: `~/Library/Application Support/Code/User/globalStorage/rooveterinaryinc.roo-cline/settings/cline_mcp_settings.json`
 3. 以下の設定を追加します:
+4. env は@aka-ganasu から受け取ること
 
 ```json
 {
@@ -317,7 +79,10 @@ use_mcp_tool(
       ],
       "env": {},
       "disabled": false,
-      "alwaysAllow": []
+      "alwaysAllow": [
+        "GITHUB_TOKEN": "ghp_xxxxx"
+        ...
+      ]
     }
   }
 }
