@@ -19,6 +19,12 @@ import {
   handleGetGitHubCommits,
   handleGetGitHubPullRequests,
   handleGetGitHubUserInfo,
+  handleGetJiraProjectInfo,
+  handleGetJiraIssue,
+  handleSearchJiraIssues,
+  handleGetJiraProjectIssues,
+  handleMapGitHubPrToJiraIssues,
+  handleGenerateDashboardSummary,
 } from "./tools/index.ts";
 
 // ツールのインポート
@@ -48,9 +54,12 @@ async function handleJsonRpcRequest(request: any) {
         console.log(`引数: ${JSON.stringify(args)}`);
 
         switch (toolName) {
+          // 文字列ツール
           case "getStringLength":
             result = await handleGetStringLength(args);
             break;
+
+          // GitHubツール
           case "getGitHubRepoInfo":
             result = await handleGetGitHubRepoInfo(args);
             break;
@@ -69,6 +78,29 @@ async function handleJsonRpcRequest(request: any) {
           case "getGitHubUserInfo":
             result = await handleGetGitHubUserInfo(args);
             break;
+
+          // JIRAツール
+          case "getJiraProjectInfo":
+            result = await handleGetJiraProjectInfo(args);
+            break;
+          case "getJiraIssue":
+            result = await handleGetJiraIssue(args);
+            break;
+          case "searchJiraIssues":
+            result = await handleSearchJiraIssues(args);
+            break;
+          case "getJiraProjectIssues":
+            result = await handleGetJiraProjectIssues(args);
+            break;
+
+          // 統合ツール
+          case "mapGitHubPrToJiraIssues":
+            result = await handleMapGitHubPrToJiraIssues(args);
+            break;
+          case "generateDashboardSummary":
+            result = await handleGenerateDashboardSummary(args);
+            break;
+
           default:
             throw new Error(`Unknown tool: ${toolName}`);
         }

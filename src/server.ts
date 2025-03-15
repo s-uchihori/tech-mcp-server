@@ -55,13 +55,26 @@ const server = new Server(
     capabilities: {
       resources: {},
       tools: {
+        // 文字列ツール
         getStringLength: TOOLS[0],
+
+        // GitHubツール
         getGitHubRepoInfo: TOOLS[1],
         getGitHubRepoContents: TOOLS[2],
         getGitHubIssues: TOOLS[3],
         getGitHubCommits: TOOLS[4],
         getGitHubPullRequests: TOOLS[5],
         getGitHubUserInfo: TOOLS[6],
+
+        // JIRAツール
+        getJiraProjectInfo: TOOLS[7],
+        getJiraIssue: TOOLS[8],
+        searchJiraIssues: TOOLS[9],
+        getJiraProjectIssues: TOOLS[10],
+
+        // 統合ツール
+        mapGitHubPrToJiraIssues: TOOLS[11],
+        generateDashboardSummary: TOOLS[12],
       },
     },
   }

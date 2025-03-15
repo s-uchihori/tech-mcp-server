@@ -100,6 +100,203 @@ GitHub リポジトリのコミット履歴を取得するツール
 - `path` (string, オプション): コミットをフィルタするパス（デフォルト: すべてのファイル）
 - `per_page` (number, オプション): 取得するコミットの数（最大: 100）（デフォルト: 30）
 
+### getGitHubPullRequests
+
+GitHub リポジトリのプルリクエストを取得するツール
+
+**パラメータ:**
+
+- `owner` (string, 必須): リポジトリのオーナー（ユーザー名または組織名）
+- `repo` (string, 必須): リポジトリ名
+- `state` (string, オプション): プルリクエストの状態（open, closed, all）（デフォルト: open）
+- `sort` (string, オプション): 結果のソート方法（created, updated, popularity, long-running）（デフォルト: created）
+- `direction` (string, オプション): ソートの方向（asc, desc）（デフォルト: desc）
+- `per_page` (number, オプション): 取得するプルリクエストの数（最大: 100）（デフォルト: 10）
+- `since` (string, オプション): 指定した日時以降に更新されたプルリクエストのみを取得（ISO 8601 形式、例: 2023-01-01T00:00:00Z）
+- `created_after` (string, オプション): 指定した日時以降に作成されたプルリクエストのみを取得（ISO 8601 形式）
+- `created_before` (string, オプション): 指定した日時以前に作成されたプルリクエストのみを取得（ISO 8601 形式）
+- `updated_after` (string, オプション): 指定した日時以降に更新されたプルリクエストのみを取得（ISO 8601 形式）
+- `updated_before` (string, オプション): 指定した日時以前に更新されたプルリクエストのみを取得（ISO 8601 形式）
+- `compact` (boolean, オプション): 必須フィールドのみのコンパクトなデータを返す（デフォルト: true）
+
+**使用例:**
+
+```
+use_mcp_tool(
+  server_name="local",
+  tool_name="getGitHubPullRequests",
+  arguments={
+    "owner": "denoland",
+    "repo": "deno",
+    "state": "open",
+    "sort": "updated",
+    "per_page": 5
+  }
+)
+```
+
+### getGitHubUserInfo
+
+認証された GitHub ユーザーの情報を取得するツール
+
+**パラメータ:**
+
+- なし
+
+**使用例:**
+
+```
+use_mcp_tool(
+  server_name="local",
+  tool_name="getGitHubUserInfo",
+  arguments={}
+)
+```
+
+## JIRA 関連ツール
+
+### getJiraProjectInfo
+
+JIRA プロジェクトの情報を取得するツール
+
+**パラメータ:**
+
+- `projectKey` (string, 必須): JIRA プロジェクトキー（例: 'PROJ'）
+
+**使用例:**
+
+```
+use_mcp_tool(
+  server_name="local",
+  tool_name="getJiraProjectInfo",
+  arguments={
+    "projectKey": "PROJ"
+  }
+)
+```
+
+### getJiraIssue
+
+JIRA チケットの情報を取得するツール
+
+**パラメータ:**
+
+- `issueKey` (string, 必須): JIRA チケットキー（例: 'PROJ-123'）
+
+**使用例:**
+
+```
+use_mcp_tool(
+  server_name="local",
+  tool_name="getJiraIssue",
+  arguments={
+    "issueKey": "PROJ-123"
+  }
+)
+```
+
+### searchJiraIssues
+
+JQL を使用して JIRA チケットを検索するツール
+
+**パラメータ:**
+
+- `jql` (string, 必須): JQL クエリ文字列
+- `maxResults` (number, オプション): 取得する結果の最大数（デフォルト: 50）
+- `fields` (array, オプション): レスポンスに含めるフィールド
+
+**使用例:**
+
+```
+use_mcp_tool(
+  server_name="local",
+  tool_name="searchJiraIssues",
+  arguments={
+    "jql": "project = PROJ AND status = 'In Progress'",
+    "maxResults": 20
+  }
+)
+```
+
+### getJiraProjectIssues
+
+JIRA プロジェクトのチケット一覧を取得するツール
+
+**パラメータ:**
+
+- `projectKey` (string, 必須): JIRA プロジェクトキー（例: 'PROJ'）
+- `status` (string, オプション): ステータスでフィルタリング（例: 'Done', 'In Progress'）
+- `maxResults` (number, オプション): 取得する結果の最大数（デフォルト: 50）
+
+**使用例:**
+
+```
+use_mcp_tool(
+  server_name="local",
+  tool_name="getJiraProjectIssues",
+  arguments={
+    "projectKey": "PROJ",
+    "status": "In Progress",
+    "maxResults": 30
+  }
+)
+```
+
+## インテグレーションツール
+
+### mapGitHubPrToJiraIssues
+
+GitHub のプルリクエストと JIRA チケットをマッピングするツール
+
+**パラメータ:**
+
+- `owner` (string, 必須): GitHub リポジトリのオーナー（ユーザー名または組織名）
+- `repo` (string, 必須): GitHub リポジトリ名
+- `projectKey` (string, 必須): フィルタリングする JIRA プロジェクトキー（例: 'PROJ'）
+- `since` (string, オプション): 指定した日時以降に更新された PR のみを含める（ISO 8601 形式）
+- `maxResults` (number, オプション): 処理する PR の最大数（デフォルト: 30）
+
+**使用例:**
+
+```
+use_mcp_tool(
+  server_name="local",
+  tool_name="mapGitHubPrToJiraIssues",
+  arguments={
+    "owner": "denoland",
+    "repo": "deno",
+    "projectKey": "PROJ",
+    "maxResults": 20
+  }
+)
+```
+
+### generateDashboardSummary
+
+開発状況のダッシュボードサマリーを生成するツール
+
+**パラメータ:**
+
+- `owner` (string, 必須): GitHub リポジトリのオーナー（ユーザー名または組織名）
+- `repos` (array, 必須): GitHub リポジトリ名のリスト
+- `projectKeys` (array, 必須): JIRA プロジェクトキーのリスト
+- `period` (string, オプション): サマリーの期間（day, week, month, quarter, year）（デフォルト: month）
+
+**使用例:**
+
+```
+use_mcp_tool(
+  server_name="local",
+  tool_name="generateDashboardSummary",
+  arguments={
+    "owner": "denoland",
+    "repos": ["deno", "deno_std"],
+    "projectKeys": ["PROJ", "DOC"],
+    "period": "month"
+  }
+)
+```
+
 ## Roo Code への登録方法
 
 1. サーバーを起動します: `deno task start`

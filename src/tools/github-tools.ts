@@ -19,6 +19,30 @@ import {
   handleGitHubApiError,
 } from "../utils/github.ts";
 
+// 共通のオプションプロパティ
+const commonProperties = {
+  compact: {
+    type: "boolean",
+    description: "Return compact data with essential fields only",
+    default: true,
+  },
+  compact_json: {
+    type: "boolean",
+    description: "Return non-formatted JSON to reduce token usage",
+    default: true,
+  },
+  include_pagination: {
+    type: "boolean",
+    description: "Include pagination information in the response",
+    default: false,
+  },
+  verbose: {
+    type: "boolean",
+    description: "Enable verbose logging",
+    default: false,
+  },
+};
+
 // GitHub リポジトリ情報取得ツール
 export const getGitHubRepoInfoTool: Tool = {
   name: "getGitHubRepoInfo",
@@ -31,6 +55,7 @@ export const getGitHubRepoInfoTool: Tool = {
         description: "Repository owner (username or organization)",
       },
       repo: { type: "string", description: "Repository name" },
+      ...commonProperties,
     },
     required: ["owner", "repo"],
   },
@@ -62,6 +87,7 @@ export const getGitHubRepoContentsTool: Tool = {
           "The name of the commit/branch/tag (default: default branch)",
         default: "",
       },
+      ...commonProperties,
     },
     required: ["owner", "repo"],
   },
@@ -92,6 +118,7 @@ export const getGitHubIssuesTool: Tool = {
         description: "Number of issues to return (max: 100)",
         default: 30,
       },
+      ...commonProperties,
     },
     required: ["owner", "repo"],
   },
@@ -122,6 +149,7 @@ export const getGitHubCommitsTool: Tool = {
         description: "Number of commits to return (max: 100)",
         default: 30,
       },
+      ...commonProperties,
     },
     required: ["owner", "repo"],
   },
@@ -188,11 +216,10 @@ export const getGitHubPullRequestsTool: Tool = {
         description:
           "Only show pull requests updated at or before this time (ISO 8601 format, e.g. 2023-01-01T00:00:00Z)",
       },
-      compact: {
-        type: "boolean",
-        description: "Return compact PR data with essential fields only",
-        default: true,
-      },
+      // compactはすでに存在するので、他の共通プロパティのみを追加
+      compact_json: commonProperties.compact_json,
+      include_pagination: commonProperties.include_pagination,
+      verbose: commonProperties.verbose,
     },
     required: ["owner", "repo"],
   },
@@ -204,10 +231,154 @@ export const getGitHubUserInfoTool: Tool = {
   description: "Get information about the authenticated GitHub user",
   inputSchema: {
     type: "object",
-    properties: {},
+    properties: {
+      ...commonProperties,
+    },
     required: [],
   },
 };
+
+// 各データ型から必要なフィールドのみを抽出する関数
+
+/**
+ * リポジトリ情報から必要なフィールドのみを抽出する関数
+ */
+function extractRepoEssentialData(repo: any): any {
+  return {
+    name: repo.name,
+    full_name: repo.full_name,
+    description: repo.description,
+    html_url: repo.html_url,
+    language: repo.language,
+    stargazers_count: repo.stargazers_count,
+    forks_count: repo.forks_count,
+    open_issues_count: repo.open_issues_count,
+    created_at: repo.created_at,
+    updated_at: repo.updated_at,
+    default_branch: repo.default_branch,
+    visibility: repo.visibility,
+  };
+}
+
+/**
+ * リポジトリコンテンツから必要なフィールドのみを抽出する関数
+ */
+function extractContentsEssentialData(content: any): any {
+  // 配列の場合（ディレクトリ内容）
+  if (Array.isArray(content)) {
+    return content.map((item) => ({
+      name: item.name,
+      path: item.path,
+      type: item.type,
+      size: item.size,
+      html_url: item.html_url,
+      download_url: item.download_url,
+    }));
+  }
+
+  // 単一ファイルの場合
+  return {
+    name: content.name,
+    path: content.path,
+    type: content.type,
+    size: content.size,
+    html_url: content.html_url,
+    download_url: content.download_url,
+    content: content.content, // エンコードされたコンテンツ
+    encoding: content.encoding,
+  };
+}
+
+/**
+ * イシューから必要なフィールドのみを抽出する関数
+ */
+function extractIssueEssentialData(issue: any): any {
+  return {
+    number: issue.number,
+    title: issue.title,
+    state: issue.state,
+    created_at: issue.created_at,
+    updated_at: issue.updated_at,
+    html_url: issue.html_url,
+    user: issue.user ? { login: issue.user.login } : null,
+    body: issue.body
+      ? typeof issue.body === "string"
+        ? issue.body.substring(0, 200) + (issue.body.length > 200 ? "..." : "")
+        : "[複合形式の説明]" // オブジェクト形式の説明の場合
+      : null, // 本文を短縮
+    labels: issue.labels ? issue.labels.map((label: any) => label.name) : [],
+    comments: issue.comments,
+  };
+}
+
+/**
+ * コミットから必要なフィールドのみを抽出する関数
+ */
+function extractCommitEssentialData(commit: any): any {
+  return {
+    sha: commit.sha,
+    html_url: commit.html_url,
+    commit: {
+      message: commit.commit.message,
+      author: commit.commit.author,
+      committer: commit.commit.committer,
+    },
+    author: commit.author ? { login: commit.author.login } : null,
+    committer: commit.committer ? { login: commit.committer.login } : null,
+  };
+}
+
+/**
+ * ユーザー情報から必要なフィールドのみを抽出する関数
+ */
+function extractUserEssentialData(user: any): any {
+  return {
+    login: user.login,
+    name: user.name,
+    html_url: user.html_url,
+    avatar_url: user.avatar_url,
+    bio: user.bio,
+    public_repos: user.public_repos,
+    followers: user.followers,
+    following: user.following,
+    created_at: user.created_at,
+  };
+}
+
+/**
+ * レスポンスにページネーション情報を追加する関数（オプション付き）
+ */
+function addPaginationInfo(
+  data: any,
+  page: number,
+  per_page: number,
+  includePagination: boolean = false
+): any {
+  if (!includePagination) {
+    return data;
+  }
+
+  if (Array.isArray(data)) {
+    return {
+      items: data,
+      pagination: {
+        page: page,
+        per_page: per_page,
+        total_items: data.length >= per_page ? "unknown" : data.length,
+      },
+    };
+  } else if (data.items) {
+    return {
+      ...data,
+      pagination: {
+        page: page,
+        per_page: per_page,
+        total_items: data.total_count,
+      },
+    };
+  }
+  return data;
+}
 
 // 引数の検証
 function validateGitHubRepoArgs(args: unknown): asserts args is GitHubRepoArgs {
@@ -223,20 +394,41 @@ function validateGitHubRepoArgs(args: unknown): asserts args is GitHubRepoArgs {
   }
 }
 
+// 共通オプションの型定義
+interface CommonOptions {
+  compact?: boolean;
+  compact_json?: boolean;
+  include_pagination?: boolean;
+  verbose?: boolean;
+}
+
 // GitHub リポジトリ情報取得ツールの実装
 export async function handleGetGitHubRepoInfo(
   args: unknown
 ): Promise<ToolResponse> {
   validateGitHubRepoArgs(args);
-  const { owner, repo } = args as GitHubRepoArgs;
+  const typedArgs = args as GitHubRepoArgs & CommonOptions;
+  const {
+    owner,
+    repo,
+    compact = true,
+    compact_json = true,
+    verbose = false,
+  } = typedArgs;
 
-  console.error(`[getGitHubRepoInfo] リポジトリ情報を取得中: ${owner}/${repo}`);
+  if (verbose) {
+    console.error(
+      `[getGitHubRepoInfo] リポジトリ情報を取得中: ${owner}/${repo}`
+    );
+  }
 
   try {
     const headers = createGitHubApiHeaders();
-    console.error(
-      `[getGitHubRepoInfo] リクエストURL: https://api.github.com/repos/${owner}/${repo}`
-    );
+    if (verbose) {
+      console.error(
+        `[getGitHubRepoInfo] リクエストURL: https://api.github.com/repos/${owner}/${repo}`
+      );
+    }
 
     const response = await fetch(
       `https://api.github.com/repos/${owner}/${repo}`,
@@ -256,14 +448,22 @@ export async function handleGetGitHubRepoInfo(
       throw error;
     }
 
-    const data = await response.json();
-    console.error(`[getGitHubRepoInfo] 成功: リポジトリ情報を取得しました`);
+    let data = await response.json();
+
+    // コンパクトモードが有効な場合、必要なフィールドのみを抽出
+    if (compact) {
+      data = extractRepoEssentialData(data);
+    }
+
+    if (verbose) {
+      console.error(`[getGitHubRepoInfo] 成功: リポジトリ情報を取得しました`);
+    }
 
     return {
       content: [
         {
           type: "text",
-          text: JSON.stringify(data, null, 2),
+          text: JSON.stringify(data, null, compact_json ? 0 : 2),
         },
       ],
       isError: false,
@@ -278,16 +478,25 @@ export async function handleGetGitHubRepoContents(
   args: unknown
 ): Promise<ToolResponse> {
   validateGitHubRepoArgs(args);
-  const typedArgs = args as GitHubRepoContentsArgs;
-  const { owner, repo } = typedArgs;
+  const typedArgs = args as GitHubRepoContentsArgs & CommonOptions;
+  const {
+    owner,
+    repo,
+    compact = true,
+    compact_json = true,
+    include_pagination = false,
+    verbose = false,
+  } = typedArgs;
   const path = typeof typedArgs.path === "string" ? typedArgs.path : "";
   const ref = typeof typedArgs.ref === "string" ? typedArgs.ref : "";
 
-  console.error(
-    `[getGitHubRepoContents] リポジトリコンテンツを取得中: ${owner}/${repo}/${path}${
-      ref ? ` (ref: ${ref})` : ""
-    }`
-  );
+  if (verbose) {
+    console.error(
+      `[getGitHubRepoContents] リポジトリコンテンツを取得中: ${owner}/${repo}/${path}${
+        ref ? ` (ref: ${ref})` : ""
+      }`
+    );
+  }
 
   try {
     const headers = createGitHubApiHeaders();
@@ -306,13 +515,23 @@ export async function handleGetGitHubRepoContents(
       );
     }
 
-    const data = await response.json();
+    let data = await response.json();
+
+    // コンパクトモードが有効な場合、必要なフィールドのみを抽出
+    if (compact) {
+      data = extractContentsEssentialData(data);
+    }
+
+    // ページネーション情報を追加（配列の場合のみ）
+    if (Array.isArray(data) && include_pagination) {
+      data = addPaginationInfo(data, 1, data.length, include_pagination);
+    }
 
     return {
       content: [
         {
           type: "text",
-          text: JSON.stringify(data, null, 2),
+          text: JSON.stringify(data, null, compact_json ? 0 : 2),
         },
       ],
       isError: false,
@@ -327,15 +546,24 @@ export async function handleGetGitHubIssues(
   args: unknown
 ): Promise<ToolResponse> {
   validateGitHubRepoArgs(args);
-  const typedArgs = args as GitHubIssuesArgs;
-  const { owner, repo } = typedArgs;
+  const typedArgs = args as GitHubIssuesArgs & CommonOptions;
+  const {
+    owner,
+    repo,
+    compact = true,
+    compact_json = true,
+    include_pagination = false,
+    verbose = false,
+  } = typedArgs;
   const state = typeof typedArgs.state === "string" ? typedArgs.state : "open";
   const per_page =
     typeof typedArgs.per_page === "number" ? typedArgs.per_page : 30;
 
-  console.error(
-    `[getGitHubIssues] イシューを取得中: ${owner}/${repo} (state: ${state}, per_page: ${per_page})`
-  );
+  if (verbose) {
+    console.error(
+      `[getGitHubIssues] イシューを取得中: ${owner}/${repo} (state: ${state}, per_page: ${per_page})`
+    );
+  }
 
   try {
     const headers = createGitHubApiHeaders();
@@ -351,13 +579,21 @@ export async function handleGetGitHubIssues(
       );
     }
 
-    const data = await response.json();
+    let data = await response.json();
+
+    // コンパクトモードが有効な場合、必要なフィールドのみを抽出
+    if (compact) {
+      data = data.map(extractIssueEssentialData);
+    }
+
+    // ページネーション情報を追加
+    data = addPaginationInfo(data, 1, per_page, include_pagination);
 
     return {
       content: [
         {
           type: "text",
-          text: JSON.stringify(data, null, 2),
+          text: JSON.stringify(data, null, compact_json ? 0 : 2),
         },
       ],
       isError: false,
@@ -372,17 +608,26 @@ export async function handleGetGitHubCommits(
   args: unknown
 ): Promise<ToolResponse> {
   validateGitHubRepoArgs(args);
-  const typedArgs = args as GitHubCommitsArgs;
-  const { owner, repo } = typedArgs;
+  const typedArgs = args as GitHubCommitsArgs & CommonOptions;
+  const {
+    owner,
+    repo,
+    compact = true,
+    compact_json = true,
+    include_pagination = false,
+    verbose = false,
+  } = typedArgs;
   const path = typeof typedArgs.path === "string" ? typedArgs.path : "";
   const per_page =
     typeof typedArgs.per_page === "number" ? typedArgs.per_page : 30;
 
-  console.error(
-    `[getGitHubCommits] コミット履歴を取得中: ${owner}/${repo}${
-      path ? ` (path: ${path})` : ""
-    } (per_page: ${per_page})`
-  );
+  if (verbose) {
+    console.error(
+      `[getGitHubCommits] コミット履歴を取得中: ${owner}/${repo}${
+        path ? ` (path: ${path})` : ""
+      } (per_page: ${per_page})`
+    );
+  }
 
   try {
     const headers = createGitHubApiHeaders();
@@ -401,13 +646,21 @@ export async function handleGetGitHubCommits(
       );
     }
 
-    const data = await response.json();
+    let data = await response.json();
+
+    // コンパクトモードが有効な場合、必要なフィールドのみを抽出
+    if (compact) {
+      data = data.map(extractCommitEssentialData);
+    }
+
+    // ページネーション情報を追加
+    data = addPaginationInfo(data, 1, per_page, include_pagination);
 
     return {
       content: [
         {
           type: "text",
-          text: JSON.stringify(data, null, 2),
+          text: JSON.stringify(data, null, compact_json ? 0 : 2),
         },
       ],
       isError: false,
@@ -457,42 +710,12 @@ function filterPullRequestData(data: any): any {
   return data;
 }
 
-/**
- * レスポンスにページネーション情報を追加する関数
- * @param data APIレスポンスデータ
- * @param page ページ番号
- * @param per_page 1ページあたりの件数
- * @returns ページネーション情報を含むデータ
- */
-function addPaginationInfo(data: any, page: number, per_page: number): any {
-  if (Array.isArray(data)) {
-    return {
-      items: data,
-      pagination: {
-        page: page,
-        per_page: per_page,
-        total_items: data.length >= per_page ? "unknown" : data.length,
-      },
-    };
-  } else if (data.items) {
-    return {
-      ...data,
-      pagination: {
-        page: page,
-        per_page: per_page,
-        total_items: data.total_count,
-      },
-    };
-  }
-  return data;
-}
-
 // GitHub プルリクエスト取得ツールの実装
 export async function handleGetGitHubPullRequests(
   args: unknown
 ): Promise<ToolResponse> {
   validateGitHubRepoArgs(args);
-  const typedArgs = args as GitHubPullRequestsArgs;
+  const typedArgs = args as GitHubPullRequestsArgs & CommonOptions;
   const { owner, repo } = typedArgs;
   const state = typeof typedArgs.state === "string" ? typedArgs.state : "open";
   const sort = typeof typedArgs.sort === "string" ? typedArgs.sort : "created";
@@ -506,24 +729,32 @@ export async function handleGetGitHubPullRequests(
   const updated_after = typedArgs.updated_after;
   const updated_before = typedArgs.updated_before;
 
-  // コンパクトモード（デフォルトでtrue）
-  const compact = typedArgs.compact !== false;
+  // 共通オプション
+  const compact = typedArgs.compact !== false; // デフォルトでtrue
+  const compact_json = typedArgs.compact_json !== false; // デフォルトでtrue
+  const include_pagination = typedArgs.include_pagination === true; // デフォルトでfalse
+  const verbose = typedArgs.verbose === true; // デフォルトでfalse
 
   // ページ番号（将来的な拡張用）
   const page = 1;
 
-  // 日時フィルタリングパラメータのログ出力
-  let filterLog = "";
-  if (since) filterLog += `, since: ${since}`;
-  if (created_after) filterLog += `, created_after: ${created_after}`;
-  if (created_before) filterLog += `, created_before: ${created_before}`;
-  if (updated_after) filterLog += `, updated_after: ${updated_after}`;
-  if (updated_before) filterLog += `, updated_before: ${updated_before}`;
-  if (compact) filterLog += `, compact: ${compact}`;
+  if (verbose) {
+    // 日時フィルタリングパラメータのログ出力
+    let filterLog = "";
+    if (since) filterLog += `, since: ${since}`;
+    if (created_after) filterLog += `, created_after: ${created_after}`;
+    if (created_before) filterLog += `, created_before: ${created_before}`;
+    if (updated_after) filterLog += `, updated_after: ${updated_after}`;
+    if (updated_before) filterLog += `, updated_before: ${updated_before}`;
+    if (compact) filterLog += `, compact: ${compact}`;
+    if (compact_json) filterLog += `, compact_json: ${compact_json}`;
+    if (include_pagination)
+      filterLog += `, include_pagination: ${include_pagination}`;
 
-  console.error(
-    `[getGitHubPullRequests] プルリクエストを取得中: ${owner}/${repo} (state: ${state}, sort: ${sort}, direction: ${direction}, per_page: ${per_page}${filterLog})`
-  );
+    console.error(
+      `[getGitHubPullRequests] プルリクエストを取得中: ${owner}/${repo} (state: ${state}, sort: ${sort}, direction: ${direction}, per_page: ${per_page}${filterLog})`
+    );
+  }
 
   try {
     const headers = createGitHubApiHeaders();
@@ -563,7 +794,9 @@ export async function handleGetGitHubPullRequests(
         query
       )}&sort=${sort}&order=${direction}&per_page=${per_page}`;
 
-      console.error(`[getGitHubPullRequests] 検索APIを使用: ${searchUrl}`);
+      if (verbose) {
+        console.error(`[getGitHubPullRequests] 検索APIを使用: ${searchUrl}`);
+      }
 
       const response = await fetch(searchUrl, { headers });
 
@@ -582,13 +815,18 @@ export async function handleGetGitHubPullRequests(
       }
 
       // ページネーション情報を追加
-      processedData = addPaginationInfo(processedData, page, per_page);
+      processedData = addPaginationInfo(
+        processedData,
+        page,
+        per_page,
+        include_pagination
+      );
 
       return {
         content: [
           {
             type: "text",
-            text: JSON.stringify(processedData, null, 2),
+            text: JSON.stringify(processedData, null, compact_json ? 0 : 2),
           },
         ],
         isError: false,
@@ -619,13 +857,18 @@ export async function handleGetGitHubPullRequests(
       }
 
       // ページネーション情報を追加
-      processedData = addPaginationInfo(processedData, page, per_page);
+      processedData = addPaginationInfo(
+        processedData,
+        page,
+        per_page,
+        include_pagination
+      );
 
       return {
         content: [
           {
             type: "text",
-            text: JSON.stringify(processedData, null, 2),
+            text: JSON.stringify(processedData, null, compact_json ? 0 : 2),
           },
         ],
         isError: false,
@@ -638,9 +881,14 @@ export async function handleGetGitHubPullRequests(
 
 // GitHub 認証ユーザー情報取得ツールの実装
 export async function handleGetGitHubUserInfo(
-  _args: unknown
+  args: unknown
 ): Promise<ToolResponse> {
-  console.error(`[getGitHubUserInfo] 認証ユーザー情報を取得中`);
+  const typedArgs = args as CommonOptions;
+  const { compact = true, compact_json = true, verbose = false } = typedArgs;
+
+  if (verbose) {
+    console.error(`[getGitHubUserInfo] 認証ユーザー情報を取得中`);
+  }
 
   try {
     const headers = createGitHubApiHeaders();
@@ -661,16 +909,24 @@ export async function handleGetGitHubUserInfo(
       throw error;
     }
 
-    const data = await response.json();
-    console.error(
-      `[getGitHubUserInfo] 成功: ユーザー '${data.login}' の情報を取得しました`
-    );
+    let data = await response.json();
+
+    // コンパクトモードが有効な場合、必要なフィールドのみを抽出
+    if (compact) {
+      data = extractUserEssentialData(data);
+    }
+
+    if (verbose) {
+      console.error(
+        `[getGitHubUserInfo] 成功: ユーザー '${data.login}' の情報を取得しました`
+      );
+    }
 
     return {
       content: [
         {
           type: "text",
-          text: JSON.stringify(data, null, 2),
+          text: JSON.stringify(data, null, compact_json ? 0 : 2),
         },
       ],
       isError: false,
