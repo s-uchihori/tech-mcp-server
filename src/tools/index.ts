@@ -3,6 +3,18 @@
 
 import { getStringLengthTool, handleGetStringLength } from "./string-tools.ts";
 import {
+  slackListChannelsTool,
+  slackPostMessageTool,
+  slackUserConversationsTool,
+  slackGetChannelHistoryTool,
+  slackGetThreadRepliesTool,
+  handleSlackListChannels,
+  handleSlackPostMessage,
+  handleSlackUserConversations,
+  handleSlackGetChannelHistory,
+  handleSlackGetThreadReplies,
+} from "./slack-tools.ts";
+import {
   getGitHubRepoInfoTool,
   getGitHubRepoContentsTool,
   getGitHubIssuesTool,
@@ -56,6 +68,13 @@ export const TOOLS: Tool[] = [
   // 統合ツール
   mapGitHubPrToJiraIssuesTool,
   generateDashboardSummaryTool,
+
+  // Slackツール
+  slackListChannelsTool,
+  slackPostMessageTool,
+  slackUserConversationsTool,
+  slackGetChannelHistoryTool,
+  slackGetThreadRepliesTool,
 ];
 
 // ツールハンドラーのエクスポート
@@ -80,6 +99,13 @@ export {
   // 統合ツールハンドラー
   handleMapGitHubPrToJiraIssues,
   handleGenerateDashboardSummary,
+
+  // Slackツールハンドラー
+  handleSlackListChannels,
+  handleSlackPostMessage,
+  handleSlackUserConversations,
+  handleSlackGetChannelHistory,
+  handleSlackGetThreadReplies,
 };
 
 // ツール名とハンドラーのマッピング
@@ -104,4 +130,11 @@ export const toolHandlers = {
   // 統合ツール
   mapGitHubPrToJiraIssues: handleMapGitHubPrToJiraIssues,
   generateDashboardSummary: handleGenerateDashboardSummary,
+
+  // Slackツール
+  slack_list_channels: handleSlackListChannels,
+  slack_post_message: handleSlackPostMessage,
+  slack_user_conversations: handleSlackUserConversations,
+  slack_get_channel_history: handleSlackGetChannelHistory,
+  slack_get_thread_replies: handleSlackGetThreadReplies,
 };

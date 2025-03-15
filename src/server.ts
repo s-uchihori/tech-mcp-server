@@ -75,6 +75,13 @@ const server = new Server(
         // 統合ツール
         mapGitHubPrToJiraIssues: TOOLS[11],
         generateDashboardSummary: TOOLS[12],
+
+        // Slackツール
+        slack_list_channels: TOOLS[13],
+        slack_post_message: TOOLS[14],
+        slack_user_conversations: TOOLS[15],
+        slack_get_channel_history: TOOLS[16],
+        slack_get_thread_replies: TOOLS[17],
       },
     },
   }

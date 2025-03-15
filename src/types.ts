@@ -3,6 +3,79 @@
 
 import { Tool } from "npm:@modelcontextprotocol/sdk@1.5.0/types.js";
 
+// Slack関連の型定義
+export interface SlackListChannelsArgs {
+  limit?: number;
+  cursor?: string;
+  member_only?: boolean;
+}
+
+export interface SlackPostMessageArgs {
+  channel_id: string;
+  text: string;
+}
+
+export interface SlackUserConversationsArgs {
+  user_id: string;
+  limit?: number;
+  cursor?: string;
+}
+
+export interface SlackChannelHistoryArgs {
+  channel_name: string;
+  limit?: number;
+  cursor?: string;
+  compact?: boolean;
+  compact_json?: boolean;
+}
+
+export interface SlackThreadRepliesArgs {
+  channel_name: string;
+  thread_ts: string;
+  limit?: number;
+  compact?: boolean;
+  compact_json?: boolean;
+}
+
+export interface SlackChannel {
+  id: string;
+  name: string;
+  is_channel: boolean;
+  is_group: boolean;
+  is_im: boolean;
+  is_member: boolean;
+  is_private: boolean;
+  created: number;
+  is_archived: boolean;
+  is_general: boolean;
+  unlinked: number;
+  name_normalized: string;
+  is_shared: boolean;
+  is_org_shared: boolean;
+  is_pending_ext_shared: boolean;
+  pending_shared: unknown[];
+  context_team_id: string;
+  updated: number;
+  parent_conversation: unknown | null;
+  creator: string;
+  is_ext_shared: boolean;
+  shared_team_ids: string[];
+  pending_connected_team_ids: unknown[];
+  topic: {
+    value: string;
+    creator: string;
+    last_set: number;
+  };
+  purpose: {
+    value: string;
+    creator: string;
+    last_set: number;
+  };
+  previous_names: string[];
+  num_members: number;
+  [key: string]: unknown;
+}
+
 // GitHub API関連の型定義
 export interface GitHubApiHeaders {
   Accept: string;
