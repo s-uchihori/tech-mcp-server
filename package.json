@@ -1,0 +1,12 @@
+{
+  "type": "module",
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "googleapis": "^146.0.0",
+    "open": "^10.1.0",
+    "server-destroy": "^1.0.1"
+  },
+  "volta": {
+    "node": "20.11.1"
+  }
+}
