@@ -5,7 +5,7 @@
 ## 前提条件
 
 - [Deno](https://deno.com/) がインストールされていること
-- Denoの環境構築は[DENO_SETUP.md](https://github.com/taka-ganasu/roo-mcp-server/blob/main/DENO_SETUP.md)を参照
+- Denoの環境構築は[DENO_SETUP.md](https://github.com/taka-ganasu/roo-mcp-server/blob/main/DENO_SETUP.md) と [VSCODE_DENO_SETUP.md](https://github.com/taka-ganasu/roo-mcp-server/blob/main/VSCODE_DENO_SETUP.md) を参照
 
 ## 起動方法
 
