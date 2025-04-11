@@ -7,12 +7,12 @@ import {
   McpError,
 } from "npm:@modelcontextprotocol/sdk@1.5.0/types.js";
 import {
+  SlackChannel,
+  SlackChannelHistoryArgs,
   SlackListChannelsArgs,
   SlackPostMessageArgs,
-  SlackUserConversationsArgs,
-  SlackChannelHistoryArgs,
   SlackThreadRepliesArgs,
-  SlackChannel,
+  SlackUserConversationsArgs,
 } from "../types.ts";
 import { getSlackClient } from "../utils/slack.ts";
 
@@ -257,7 +257,7 @@ export async function handleSlackListChannels(args: unknown): Promise<{
 
     const response = await slackClient.getChannels(
       typedArgs.limit,
-      typedArgs.cursor
+      typedArgs.cursor,
     );
 
     if (!response.ok) {
@@ -268,17 +268,17 @@ export async function handleSlackListChannels(args: unknown): Promise<{
     let channels = response.channels as SlackChannel[];
     if (typedArgs.member_only && channels) {
       channels = channels.filter(
-        (channel: SlackChannel) => channel.is_member === true
+        (channel: SlackChannel) => channel.is_member === true,
       );
       console.error(
-        `[slack_list_channels] メンバーのみのチャンネルをフィルタリングしました (${channels.length}件)`
+        `[slack_list_channels] メンバーのみのチャンネルをフィルタリングしました (${channels.length}件)`,
       );
     }
 
     console.error(
       `[slack_list_channels] ${
         channels?.length ?? 0
-      }件のチャンネルを取得しました`
+      }件のチャンネルを取得しました`,
     );
 
     // 元のレスポンスを複製して、フィルタリングされたチャンネルで置き換え
@@ -298,7 +298,7 @@ export async function handleSlackListChannels(args: unknown): Promise<{
     };
   } catch (error) {
     console.error(
-      `[ERROR] ${error instanceof Error ? error.message : String(error)}`
+      `[ERROR] ${error instanceof Error ? error.message : String(error)}`,
     );
 
     return {
@@ -330,14 +330,14 @@ export async function handleSlackPostMessage(args: unknown): Promise<{
     if (!typedArgs.channel_id || !typedArgs.text) {
       throw new McpError(
         ErrorCode.InvalidParams,
-        "Missing required arguments: channel_id and text"
+        "Missing required arguments: channel_id and text",
       );
     }
 
     const slackClient = getSlackClient();
     const response = await slackClient.postMessage(
       typedArgs.channel_id,
-      typedArgs.text
+      typedArgs.text,
     );
 
     if (!response.ok) {
@@ -345,7 +345,7 @@ export async function handleSlackPostMessage(args: unknown): Promise<{
     }
 
     console.error(
-      `[slack_post_message] メッセージを投稿しました (channel=${typedArgs.channel_id})`
+      `[slack_post_message] メッセージを投稿しました (channel=${typedArgs.channel_id})`,
     );
 
     return {
@@ -359,7 +359,7 @@ export async function handleSlackPostMessage(args: unknown): Promise<{
     };
   } catch (error) {
     console.error(
-      `[ERROR] ${error instanceof Error ? error.message : String(error)}`
+      `[ERROR] ${error instanceof Error ? error.message : String(error)}`,
     );
 
     return {
@@ -391,7 +391,7 @@ export async function handleSlackUserConversations(args: unknown): Promise<{
     if (!typedArgs.user_id) {
       throw new McpError(
         ErrorCode.InvalidParams,
-        "Missing required argument: user_id"
+        "Missing required argument: user_id",
       );
     }
 
@@ -399,7 +399,7 @@ export async function handleSlackUserConversations(args: unknown): Promise<{
     const response = await slackClient.getUserConversations(
       typedArgs.user_id,
       typedArgs.limit,
-      typedArgs.cursor
+      typedArgs.cursor,
     );
 
     if (!response.ok) {
@@ -407,9 +407,9 @@ export async function handleSlackUserConversations(args: unknown): Promise<{
     }
 
     console.error(
-      `[slack_user_conversations] ユーザー(${
-        typedArgs.user_id
-      })のチャンネル一覧を取得しました (${response.channels?.length ?? 0}件)`
+      `[slack_user_conversations] ユーザー(${typedArgs.user_id})のチャンネル一覧を取得しました (${
+        response.channels?.length ?? 0
+      }件)`,
     );
 
     return {
@@ -423,7 +423,7 @@ export async function handleSlackUserConversations(args: unknown): Promise<{
     };
   } catch (error) {
     console.error(
-      `[ERROR] ${error instanceof Error ? error.message : String(error)}`
+      `[ERROR] ${error instanceof Error ? error.message : String(error)}`,
     );
 
     return {
@@ -457,7 +457,7 @@ export async function handleSlackGetChannelHistory(args: unknown): Promise<{
     if (!typedArgs.channel_name) {
       throw new McpError(
         ErrorCode.InvalidParams,
-        "Missing required argument: channel_name"
+        "Missing required argument: channel_name",
       );
     }
 
@@ -465,7 +465,7 @@ export async function handleSlackGetChannelHistory(args: unknown): Promise<{
     const response = await slackClient.getChannelHistoryByName(
       typedArgs.channel_name,
       typedArgs.limit,
-      typedArgs.cursor
+      typedArgs.cursor,
     );
 
     if (!response.ok) {
@@ -473,9 +473,9 @@ export async function handleSlackGetChannelHistory(args: unknown): Promise<{
     }
 
     console.error(
-      `[slack_get_channel_history] チャンネル「${
-        typedArgs.channel_name
-      }」の会話履歴を取得しました (${response.messages?.length ?? 0}件)`
+      `[slack_get_channel_history] チャンネル「${typedArgs.channel_name}」の会話履歴を取得しました (${
+        response.messages?.length ?? 0
+      }件)`,
     );
 
     // コンパクトモードが有効な場合、必要なフィールドのみを抽出
@@ -498,7 +498,7 @@ export async function handleSlackGetChannelHistory(args: unknown): Promise<{
     };
   } catch (error) {
     console.error(
-      `[ERROR] ${error instanceof Error ? error.message : String(error)}`
+      `[ERROR] ${error instanceof Error ? error.message : String(error)}`,
     );
 
     return {
@@ -532,7 +532,7 @@ export async function handleSlackGetThreadReplies(args: unknown): Promise<{
     if (!typedArgs.channel_name || !typedArgs.thread_ts) {
       throw new McpError(
         ErrorCode.InvalidParams,
-        "Missing required arguments: channel_name and thread_ts"
+        "Missing required arguments: channel_name and thread_ts",
       );
     }
 
@@ -540,7 +540,7 @@ export async function handleSlackGetThreadReplies(args: unknown): Promise<{
     const response = await slackClient.getThreadRepliesByChannelName(
       typedArgs.channel_name,
       typedArgs.thread_ts,
-      typedArgs.limit
+      typedArgs.limit,
     );
 
     if (!response.ok) {
@@ -548,11 +548,9 @@ export async function handleSlackGetThreadReplies(args: unknown): Promise<{
     }
 
     console.error(
-      `[slack_get_thread_replies] チャンネル「${
-        typedArgs.channel_name
-      }」のスレッド(${typedArgs.thread_ts})の返信を取得しました (${
+      `[slack_get_thread_replies] チャンネル「${typedArgs.channel_name}」のスレッド(${typedArgs.thread_ts})の返信を取得しました (${
         response.messages?.length ?? 0
-      }件)`
+      }件)`,
     );
 
     // コンパクトモードが有効な場合、必要なフィールドのみを抽出
@@ -575,7 +573,7 @@ export async function handleSlackGetThreadReplies(args: unknown): Promise<{
     };
   } catch (error) {
     console.error(
-      `[ERROR] ${error instanceof Error ? error.message : String(error)}`
+      `[ERROR] ${error instanceof Error ? error.message : String(error)}`,
     );
 
     return {

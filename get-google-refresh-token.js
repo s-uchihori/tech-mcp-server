@@ -1,10 +1,8 @@
-// @ts-nocheck
 // get-google-refresh-token.js
 // Google OAuth 2.0のリフレッシュトークンを取得するためのスクリプト
 
 // .envファイルから環境変数を読み込む
 import dotenv from "dotenv";
-import http from "http";
 import { parse } from "url";
 import open from "open";
 import { createServer } from "http";

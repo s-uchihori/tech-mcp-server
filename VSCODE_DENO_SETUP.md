@@ -2,13 +2,15 @@
 
 ## VSCode での TypeScript エラー表示を解消する方法
 
-VSCode で Deno プロジェクトを開発する際、以下のようなインポート文でエラーが表示されることがあります：
+VSCode で Deno
+プロジェクトを開発する際、以下のようなインポート文でエラーが表示されることがあります：
 
 ```typescript
 import { StdioServerTransport } from "npm:@modelcontextprotocol/sdk@1.5.0/server/stdio.js";
 ```
 
-これは、VSCode の TypeScript 言語サービスが Deno の特殊なインポート構文（`npm:`プレフィックスなど）を理解していないことが原因です。以下の方法でこの問題を解決できます。
+これは、VSCode の TypeScript 言語サービスが Deno
+の特殊なインポート構文（`npm:`プレフィックスなど）を理解していないことが原因です。以下の方法でこの問題を解決できます。
 
 ## 1. Deno VSCode 拡張機能のインストール
 
@@ -47,7 +49,8 @@ import { StdioServerTransport } from "npm:@modelcontextprotocol/sdk@1.5.0/server
 この設定により：
 
 - Deno 言語サービスが有効になります
-- 標準の TypeScript/JavaScript 検証が無効になり、代わりに Deno 拡張機能が検証を行います
+- 標準の TypeScript/JavaScript 検証が無効になり、代わりに Deno
+  拡張機能が検証を行います
 - インポートマップとして`deno.json`が使用されます
 
 ## 3. deno.jsonc ファイルの作成

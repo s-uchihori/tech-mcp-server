@@ -7,11 +7,11 @@ import {
   McpError,
 } from "npm:@modelcontextprotocol/sdk@1.5.0/types.js";
 import {
+  GitHubCommitsArgs,
+  GitHubIssuesArgs,
+  GitHubPullRequestsArgs,
   GitHubRepoArgs,
   GitHubRepoContentsArgs,
-  GitHubIssuesArgs,
-  GitHubCommitsArgs,
-  GitHubPullRequestsArgs,
   ToolResponse,
 } from "../types.ts";
 import {
@@ -352,7 +352,7 @@ function addPaginationInfo(
   data: any,
   page: number,
   per_page: number,
-  includePagination: boolean = false
+  includePagination: boolean = false,
 ): any {
   if (!includePagination) {
     return data;
@@ -389,7 +389,7 @@ function validateGitHubRepoArgs(args: unknown): asserts args is GitHubRepoArgs {
   ) {
     throw new McpError(
       ErrorCode.InvalidParams,
-      `Expected owner and repo to be strings`
+      `Expected owner and repo to be strings`,
     );
   }
 }
@@ -404,7 +404,7 @@ interface CommonOptions {
 
 // GitHub リポジトリ情報取得ツールの実装
 export async function handleGetGitHubRepoInfo(
-  args: unknown
+  args: unknown,
 ): Promise<ToolResponse> {
   validateGitHubRepoArgs(args);
   const typedArgs = args as GitHubRepoArgs & CommonOptions;
@@ -418,7 +418,7 @@ export async function handleGetGitHubRepoInfo(
 
   if (verbose) {
     console.error(
-      `[getGitHubRepoInfo] リポジトリ情報を取得中: ${owner}/${repo}`
+      `[getGitHubRepoInfo] リポジトリ情報を取得中: ${owner}/${repo}`,
     );
   }
 
@@ -426,19 +426,19 @@ export async function handleGetGitHubRepoInfo(
     const headers = createGitHubApiHeaders();
     if (verbose) {
       console.error(
-        `[getGitHubRepoInfo] リクエストURL: https://api.github.com/repos/${owner}/${repo}`
+        `[getGitHubRepoInfo] リクエストURL: https://api.github.com/repos/${owner}/${repo}`,
       );
     }
 
     const response = await fetch(
       `https://api.github.com/repos/${owner}/${repo}`,
-      { headers }
+      { headers },
     );
 
     if (!response.ok) {
       const errorText = await response.text();
       const error = new Error(
-        `GitHub API error: ${response.status} ${response.statusText}`
+        `GitHub API error: ${response.status} ${response.statusText}`,
       );
       (error as any).response = {
         status: response.status,
@@ -475,7 +475,7 @@ export async function handleGetGitHubRepoInfo(
 
 // GitHub リポジトリコンテンツ取得ツールの実装
 export async function handleGetGitHubRepoContents(
-  args: unknown
+  args: unknown,
 ): Promise<ToolResponse> {
   validateGitHubRepoArgs(args);
   const typedArgs = args as GitHubRepoContentsArgs & CommonOptions;
@@ -494,7 +494,7 @@ export async function handleGetGitHubRepoContents(
     console.error(
       `[getGitHubRepoContents] リポジトリコンテンツを取得中: ${owner}/${repo}/${path}${
         ref ? ` (ref: ${ref})` : ""
-      }`
+      }`,
     );
   }
 
@@ -511,7 +511,7 @@ export async function handleGetGitHubRepoContents(
 
     if (!response.ok) {
       throw new Error(
-        `GitHub API error: ${response.status} ${response.statusText}`
+        `GitHub API error: ${response.status} ${response.statusText}`,
       );
     }
 
@@ -543,7 +543,7 @@ export async function handleGetGitHubRepoContents(
 
 // GitHub イシュー取得ツールの実装
 export async function handleGetGitHubIssues(
-  args: unknown
+  args: unknown,
 ): Promise<ToolResponse> {
   validateGitHubRepoArgs(args);
   const typedArgs = args as GitHubIssuesArgs & CommonOptions;
@@ -556,12 +556,13 @@ export async function handleGetGitHubIssues(
     verbose = false,
   } = typedArgs;
   const state = typeof typedArgs.state === "string" ? typedArgs.state : "open";
-  const per_page =
-    typeof typedArgs.per_page === "number" ? typedArgs.per_page : 30;
+  const per_page = typeof typedArgs.per_page === "number"
+    ? typedArgs.per_page
+    : 30;
 
   if (verbose) {
     console.error(
-      `[getGitHubIssues] イシューを取得中: ${owner}/${repo} (state: ${state}, per_page: ${per_page})`
+      `[getGitHubIssues] イシューを取得中: ${owner}/${repo} (state: ${state}, per_page: ${per_page})`,
     );
   }
 
@@ -569,13 +570,14 @@ export async function handleGetGitHubIssues(
     const headers = createGitHubApiHeaders();
 
     // URLにクエリパラメータを追加
-    const url = `https://api.github.com/repos/${owner}/${repo}/issues?state=${state}&per_page=${per_page}`;
+    const url =
+      `https://api.github.com/repos/${owner}/${repo}/issues?state=${state}&per_page=${per_page}`;
 
     const response = await fetch(url, { headers });
 
     if (!response.ok) {
       throw new Error(
-        `GitHub API error: ${response.status} ${response.statusText}`
+        `GitHub API error: ${response.status} ${response.statusText}`,
       );
     }
 
@@ -605,7 +607,7 @@ export async function handleGetGitHubIssues(
 
 // GitHub コミット履歴取得ツールの実装
 export async function handleGetGitHubCommits(
-  args: unknown
+  args: unknown,
 ): Promise<ToolResponse> {
   validateGitHubRepoArgs(args);
   const typedArgs = args as GitHubCommitsArgs & CommonOptions;
@@ -618,14 +620,15 @@ export async function handleGetGitHubCommits(
     verbose = false,
   } = typedArgs;
   const path = typeof typedArgs.path === "string" ? typedArgs.path : "";
-  const per_page =
-    typeof typedArgs.per_page === "number" ? typedArgs.per_page : 30;
+  const per_page = typeof typedArgs.per_page === "number"
+    ? typedArgs.per_page
+    : 30;
 
   if (verbose) {
     console.error(
       `[getGitHubCommits] コミット履歴を取得中: ${owner}/${repo}${
         path ? ` (path: ${path})` : ""
-      } (per_page: ${per_page})`
+      } (per_page: ${per_page})`,
     );
   }
 
@@ -633,7 +636,8 @@ export async function handleGetGitHubCommits(
     const headers = createGitHubApiHeaders();
 
     // URLにクエリパラメータを追加
-    let url = `https://api.github.com/repos/${owner}/${repo}/commits?per_page=${per_page}`;
+    let url =
+      `https://api.github.com/repos/${owner}/${repo}/commits?per_page=${per_page}`;
     if (path) {
       url += `&path=${path}`;
     }
@@ -642,7 +646,7 @@ export async function handleGetGitHubCommits(
 
     if (!response.ok) {
       throw new Error(
-        `GitHub API error: ${response.status} ${response.statusText}`
+        `GitHub API error: ${response.status} ${response.statusText}`,
       );
     }
 
@@ -712,17 +716,19 @@ function filterPullRequestData(data: any): any {
 
 // GitHub プルリクエスト取得ツールの実装
 export async function handleGetGitHubPullRequests(
-  args: unknown
+  args: unknown,
 ): Promise<ToolResponse> {
   validateGitHubRepoArgs(args);
   const typedArgs = args as GitHubPullRequestsArgs & CommonOptions;
   const { owner, repo } = typedArgs;
   const state = typeof typedArgs.state === "string" ? typedArgs.state : "open";
   const sort = typeof typedArgs.sort === "string" ? typedArgs.sort : "created";
-  const direction =
-    typeof typedArgs.direction === "string" ? typedArgs.direction : "desc";
-  const per_page =
-    typeof typedArgs.per_page === "number" ? typedArgs.per_page : 10; // デフォルト値を10に変更
+  const direction = typeof typedArgs.direction === "string"
+    ? typedArgs.direction
+    : "desc";
+  const per_page = typeof typedArgs.per_page === "number"
+    ? typedArgs.per_page
+    : 10; // デフォルト値を10に変更
   const since = typedArgs.since;
   const created_after = typedArgs.created_after;
   const created_before = typedArgs.created_before;
@@ -748,11 +754,12 @@ export async function handleGetGitHubPullRequests(
     if (updated_before) filterLog += `, updated_before: ${updated_before}`;
     if (compact) filterLog += `, compact: ${compact}`;
     if (compact_json) filterLog += `, compact_json: ${compact_json}`;
-    if (include_pagination)
+    if (include_pagination) {
       filterLog += `, include_pagination: ${include_pagination}`;
+    }
 
     console.error(
-      `[getGitHubPullRequests] プルリクエストを取得中: ${owner}/${repo} (state: ${state}, sort: ${sort}, direction: ${direction}, per_page: ${per_page}${filterLog})`
+      `[getGitHubPullRequests] プルリクエストを取得中: ${owner}/${repo} (state: ${state}, sort: ${sort}, direction: ${direction}, per_page: ${per_page}${filterLog})`,
     );
   }
 
@@ -790,9 +797,11 @@ export async function handleGetGitHubPullRequests(
       }
 
       // 検索APIのURLを構築
-      const searchUrl = `https://api.github.com/search/issues?q=${encodeURIComponent(
-        query
-      )}&sort=${sort}&order=${direction}&per_page=${per_page}`;
+      const searchUrl = `https://api.github.com/search/issues?q=${
+        encodeURIComponent(
+          query,
+        )
+      }&sort=${sort}&order=${direction}&per_page=${per_page}`;
 
       if (verbose) {
         console.error(`[getGitHubPullRequests] 検索APIを使用: ${searchUrl}`);
@@ -802,7 +811,7 @@ export async function handleGetGitHubPullRequests(
 
       if (!response.ok) {
         throw new Error(
-          `GitHub API error: ${response.status} ${response.statusText}`
+          `GitHub API error: ${response.status} ${response.statusText}`,
         );
       }
 
@@ -819,7 +828,7 @@ export async function handleGetGitHubPullRequests(
         processedData,
         page,
         per_page,
-        include_pagination
+        include_pagination,
       );
 
       return {
@@ -833,7 +842,8 @@ export async function handleGetGitHubPullRequests(
       };
     } else {
       // 標準のPR取得APIを使用
-      let url = `https://api.github.com/repos/${owner}/${repo}/pulls?state=${state}&sort=${sort}&direction=${direction}&per_page=${per_page}`;
+      let url =
+        `https://api.github.com/repos/${owner}/${repo}/pulls?state=${state}&sort=${sort}&direction=${direction}&per_page=${per_page}`;
 
       // since パラメータが指定されている場合は追加
       if (since) {
@@ -844,7 +854,7 @@ export async function handleGetGitHubPullRequests(
 
       if (!response.ok) {
         throw new Error(
-          `GitHub API error: ${response.status} ${response.statusText}`
+          `GitHub API error: ${response.status} ${response.statusText}`,
         );
       }
 
@@ -861,7 +871,7 @@ export async function handleGetGitHubPullRequests(
         processedData,
         page,
         per_page,
-        include_pagination
+        include_pagination,
       );
 
       return {
@@ -881,7 +891,7 @@ export async function handleGetGitHubPullRequests(
 
 // GitHub 認証ユーザー情報取得ツールの実装
 export async function handleGetGitHubUserInfo(
-  args: unknown
+  args: unknown,
 ): Promise<ToolResponse> {
   const typedArgs = args as CommonOptions;
   const { compact = true, compact_json = true, verbose = false } = typedArgs;
@@ -899,7 +909,7 @@ export async function handleGetGitHubUserInfo(
     if (!response.ok) {
       const errorText = await response.text();
       const error = new Error(
-        `GitHub API error: ${response.status} ${response.statusText}`
+        `GitHub API error: ${response.status} ${response.statusText}`,
       );
       (error as any).response = {
         status: response.status,
@@ -918,7 +928,7 @@ export async function handleGetGitHubUserInfo(
 
     if (verbose) {
       console.error(
-        `[getGitHubUserInfo] 成功: ユーザー '${data.login}' の情報を取得しました`
+        `[getGitHubUserInfo] 成功: ユーザー '${data.login}' の情報を取得しました`,
       );
     }
 

@@ -7,7 +7,7 @@ import {
   ListToolsRequest,
   McpError,
 } from "npm:@modelcontextprotocol/sdk@1.5.0/types.js";
-import { TOOLS, toolHandlers } from "../tools/index.ts";
+import { toolHandlers, TOOLS } from "../tools/index.ts";
 
 /**
  * ツール一覧を取得するハンドラー
@@ -38,7 +38,7 @@ export async function handleCallTool(request: CallToolRequest) {
     return await handler(args);
   } catch (error) {
     console.error(
-      `[ERROR] ${error instanceof Error ? error.message : String(error)}`
+      `[ERROR] ${error instanceof Error ? error.message : String(error)}`,
     );
 
     if (error instanceof McpError) {

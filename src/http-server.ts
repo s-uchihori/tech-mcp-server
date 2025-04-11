@@ -12,19 +12,19 @@ import {
 
 // ハンドラーのインポート
 import {
-  handleGetStringLength,
-  handleGetGitHubRepoInfo,
-  handleGetGitHubRepoContents,
-  handleGetGitHubIssues,
-  handleGetGitHubCommits,
-  handleGetGitHubPullRequests,
-  handleGetGitHubUserInfo,
-  handleGetJiraProjectInfo,
-  handleGetJiraIssue,
-  handleSearchJiraIssues,
-  handleGetJiraProjectIssues,
-  handleMapGitHubPrToJiraIssues,
   handleGenerateDashboardSummary,
+  handleGetGitHubCommits,
+  handleGetGitHubIssues,
+  handleGetGitHubPullRequests,
+  handleGetGitHubRepoContents,
+  handleGetGitHubRepoInfo,
+  handleGetGitHubUserInfo,
+  handleGetJiraIssue,
+  handleGetJiraProjectInfo,
+  handleGetJiraProjectIssues,
+  handleGetStringLength,
+  handleMapGitHubPrToJiraIssues,
+  handleSearchJiraIssues,
 } from "./tools/index.ts";
 
 // ツールのインポート
@@ -201,7 +201,7 @@ async function main() {
               message: "Parse error",
             },
           }),
-          { status: 400, headers }
+          { status: 400, headers },
         );
       }
     });

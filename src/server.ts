@@ -39,9 +39,9 @@ try {
 
 import { TOOLS } from "./tools/index.ts";
 import {
+  handleCallTool,
   handleListResources,
   handleListTools,
-  handleCallTool,
 } from "./handlers/index.ts";
 
 // サーバーの初期化
@@ -83,7 +83,7 @@ const server = new Server(
         slack_get_thread_replies: TOOLS[17],
       },
     },
-  }
+  },
 );
 
 // リクエストハンドラーの設定

@@ -7,8 +7,8 @@ import {
   McpError,
 } from "npm:@modelcontextprotocol/sdk@1.5.0/types.js";
 import {
-  GitHubJiraIntegrationArgs,
   DashboardSummaryArgs,
+  GitHubJiraIntegrationArgs,
   ToolResponse,
 } from "../types.ts";
 import {
@@ -173,7 +173,7 @@ function extractDashboardSummaryEssentialData(summary: any): any {
         prs: contributor.prs,
         commits: contributor.commits,
         total_contributions: contributor.total_contributions,
-      })
+      }),
     ),
   };
 }
@@ -187,7 +187,7 @@ interface CommonOptions {
 
 // 引数の検証
 function validateGitHubJiraIntegrationArgs(
-  args: unknown
+  args: unknown,
 ): asserts args is GitHubJiraIntegrationArgs {
   const typedArgs = args as GitHubJiraIntegrationArgs;
   if (
@@ -197,13 +197,13 @@ function validateGitHubJiraIntegrationArgs(
   ) {
     throw new McpError(
       ErrorCode.InvalidParams,
-      `Expected owner, repo, and projectKey to be strings`
+      `Expected owner, repo, and projectKey to be strings`,
     );
   }
 }
 
 function validateDashboardSummaryArgs(
-  args: unknown
+  args: unknown,
 ): asserts args is DashboardSummaryArgs {
   const typedArgs = args as DashboardSummaryArgs;
   if (
@@ -213,7 +213,7 @@ function validateDashboardSummaryArgs(
   ) {
     throw new McpError(
       ErrorCode.InvalidParams,
-      `Expected owner to be a string, and repos and projectKeys to be arrays`
+      `Expected owner to be a string, and repos and projectKeys to be arrays`,
     );
   }
 }
@@ -225,8 +225,11 @@ function validateDashboardSummaryArgs(
  */
 function extractJiraKeysFromPr(pr: any): string[] {
   const title = pr.title || "";
-  const body =
-    typeof pr.body === "string" ? pr.body : pr.body ? "[複合形式の説明]" : "";
+  const body = typeof pr.body === "string"
+    ? pr.body
+    : pr.body
+    ? "[複合形式の説明]"
+    : "";
 
   // タイトルと本文からJIRAチケットキーを抽出
   const keysFromTitle = extractJiraIssueKeys(title);
@@ -281,7 +284,7 @@ function calculateDateRange(period: string): {
 
 // GitHub PR と JIRA チケットのマッピングツールの実装
 export async function handleMapGitHubPrToJiraIssues(
-  args: unknown
+  args: unknown,
 ): Promise<ToolResponse> {
   validateGitHubJiraIntegrationArgs(args);
   const typedArgs = args as GitHubJiraIntegrationArgs & CommonOptions;
@@ -294,19 +297,21 @@ export async function handleMapGitHubPrToJiraIssues(
     verbose = false,
   } = typedArgs;
   const since = typedArgs.since;
-  const maxResults =
-    typeof typedArgs.maxResults === "number" ? typedArgs.maxResults : 30;
+  const maxResults = typeof typedArgs.maxResults === "number"
+    ? typedArgs.maxResults
+    : 30;
 
   if (verbose) {
     console.error(
-      `[mapGitHubPrToJiraIssues] PRとJIRAチケットのマッピングを開始: ${owner}/${repo} (projectKey: ${projectKey})`
+      `[mapGitHubPrToJiraIssues] PRとJIRAチケットのマッピングを開始: ${owner}/${repo} (projectKey: ${projectKey})`,
     );
   }
 
   try {
     // 1. GitHubからPR一覧を取得
     const githubHeaders = createGitHubApiHeaders();
-    let prUrl = `https://api.github.com/repos/${owner}/${repo}/pulls?state=all&sort=updated&direction=desc&per_page=${maxResults}`;
+    let prUrl =
+      `https://api.github.com/repos/${owner}/${repo}/pulls?state=all&sort=updated&direction=desc&per_page=${maxResults}`;
 
     if (since) {
       prUrl += `&since=${since}`;
@@ -320,14 +325,14 @@ export async function handleMapGitHubPrToJiraIssues(
 
     if (!prResponse.ok) {
       throw new Error(
-        `GitHub API error: ${prResponse.status} ${prResponse.statusText}`
+        `GitHub API error: ${prResponse.status} ${prResponse.statusText}`,
       );
     }
 
     const prs = await prResponse.json();
     if (verbose) {
       console.error(
-        `[mapGitHubPrToJiraIssues] ${prs.length}件のPRを取得しました`
+        `[mapGitHubPrToJiraIssues] ${prs.length}件のPRを取得しました`,
       );
     }
 
@@ -388,7 +393,7 @@ export async function handleMapGitHubPrToJiraIssues(
       if (!jiraResponse.ok) {
         if (verbose) {
           console.error(
-            `JIRA API error: ${jiraResponse.status} ${jiraResponse.statusText}`
+            `JIRA API error: ${jiraResponse.status} ${jiraResponse.statusText}`,
           );
         }
         // JIRAエラーがあっても処理を続行
@@ -443,7 +448,7 @@ export async function handleMapGitHubPrToJiraIssues(
 
 // 開発状況サマリー生成ツールの実装
 export async function handleGenerateDashboardSummary(
-  args: unknown
+  args: unknown,
 ): Promise<ToolResponse> {
   validateDashboardSummaryArgs(args);
   const typedArgs = args as DashboardSummaryArgs & CommonOptions;
@@ -459,9 +464,11 @@ export async function handleGenerateDashboardSummary(
 
   if (verbose) {
     console.error(
-      `[generateDashboardSummary] 開発状況サマリーを生成中: ${owner} (repos: ${repos.join(
-        ", "
-      )}, projectKeys: ${projectKeys.join(", ")}, period: ${period})`
+      `[generateDashboardSummary] 開発状況サマリーを生成中: ${owner} (repos: ${
+        repos.join(
+          ", ",
+        )
+      }, projectKeys: ${projectKeys.join(", ")}, period: ${period})`,
     );
   }
 
@@ -470,7 +477,7 @@ export async function handleGenerateDashboardSummary(
     const { startDate, endDate } = calculateDateRange(period);
     if (verbose) {
       console.error(
-        `[generateDashboardSummary] 期間: ${startDate} から ${endDate}`
+        `[generateDashboardSummary] 期間: ${startDate} から ${endDate}`,
       );
     }
 
@@ -488,18 +495,19 @@ export async function handleGenerateDashboardSummary(
     for (const repo of repos) {
       if (verbose) {
         console.error(
-          `[generateDashboardSummary] リポジトリデータ収集中: ${owner}/${repo}`
+          `[generateDashboardSummary] リポジトリデータ収集中: ${owner}/${repo}`,
         );
       }
 
       // PRデータの取得
-      const prUrl = `https://api.github.com/repos/${owner}/${repo}/pulls?state=all&sort=updated&direction=desc&per_page=100`;
+      const prUrl =
+        `https://api.github.com/repos/${owner}/${repo}/pulls?state=all&sort=updated&direction=desc&per_page=100`;
       const prResponse = await fetch(prUrl, { headers: githubHeaders });
 
       if (!prResponse.ok) {
         if (verbose) {
           console.error(
-            `GitHub API error (PR): ${prResponse.status} ${prResponse.statusText}`
+            `GitHub API error (PR): ${prResponse.status} ${prResponse.statusText}`,
           );
         }
         continue;
@@ -516,13 +524,14 @@ export async function handleGenerateDashboardSummary(
       });
 
       // コミットデータの取得
-      const commitUrl = `https://api.github.com/repos/${owner}/${repo}/commits?since=${startDate}&until=${endDate}&per_page=100`;
+      const commitUrl =
+        `https://api.github.com/repos/${owner}/${repo}/commits?since=${startDate}&until=${endDate}&per_page=100`;
       const commitResponse = await fetch(commitUrl, { headers: githubHeaders });
 
       if (!commitResponse.ok) {
         if (verbose) {
           console.error(
-            `GitHub API error (Commits): ${commitResponse.status} ${commitResponse.statusText}`
+            `GitHub API error (Commits): ${commitResponse.status} ${commitResponse.statusText}`,
           );
         }
         continue;
@@ -572,7 +581,7 @@ export async function handleGenerateDashboardSummary(
     for (const projectKey of projectKeys) {
       if (verbose) {
         console.error(
-          `[generateDashboardSummary] JIRAプロジェクトデータ収集中: ${projectKey}`
+          `[generateDashboardSummary] JIRAプロジェクトデータ収集中: ${projectKey}`,
         );
       }
 
@@ -602,7 +611,7 @@ export async function handleGenerateDashboardSummary(
       if (!jiraResponse.ok) {
         if (verbose) {
           console.error(
-            `JIRA API error: ${jiraResponse.status} ${jiraResponse.statusText}`
+            `JIRA API error: ${jiraResponse.status} ${jiraResponse.statusText}`,
           );
         }
         continue;
@@ -617,7 +626,7 @@ export async function handleGenerateDashboardSummary(
           issue.fields.status &&
           (issue.fields.status.name === "Done" ||
             issue.fields.status.name === "Closed" ||
-            issue.fields.status.name === "Resolved")
+            issue.fields.status.name === "Resolved"),
       ).length;
 
       // プロジェクト統計の追加
@@ -646,10 +655,9 @@ export async function handleGenerateDashboardSummary(
       jira_summary: {
         total_issues: totalJiraIssues,
         completed_issues: completedJiraIssues,
-        completion_rate:
-          totalJiraIssues > 0
-            ? ((completedJiraIssues / totalJiraIssues) * 100).toFixed(2) + "%"
-            : "0%",
+        completion_rate: totalJiraIssues > 0
+          ? ((completedJiraIssues / totalJiraIssues) * 100).toFixed(2) + "%"
+          : "0%",
         projects: jiraStats,
       },
       contributor_summary: Object.entries(contributorStats)

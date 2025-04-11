@@ -20,11 +20,11 @@ export function createGitHubApiHeaders(): Record<string, string> {
     // 簡潔なログ出力
     const tokenPreview = githubToken.substring(0, 8) + "...";
     console.error(
-      `[GitHub API] トークン ${tokenPreview} を使用してアクセスします`
+      `[GitHub API] トークン ${tokenPreview} を使用してアクセスします`,
     );
   } else {
     console.error(
-      `[GitHub API] 認証なしでアクセスします（プライベートリポジトリにはアクセスできません）`
+      `[GitHub API] 認証なしでアクセスします（プライベートリポジトリにはアクセスできません）`,
     );
     // 注意: 環境変数GITHUB_TOKENを設定してください
   }

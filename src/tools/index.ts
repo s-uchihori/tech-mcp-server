@@ -3,52 +3,52 @@
 
 import { getStringLengthTool, handleGetStringLength } from "./string-tools.ts";
 import {
-  googleCalendarGetEventsTool,
   googleCalendarCreateEventTool,
-  handleGoogleCalendarGetEvents,
+  googleCalendarGetEventsTool,
   handleGoogleCalendarCreateEvent,
+  handleGoogleCalendarGetEvents,
 } from "./google-calendar-tools.ts";
 import {
-  slackListChannelsTool,
-  slackPostMessageTool,
-  slackUserConversationsTool,
-  slackGetChannelHistoryTool,
-  slackGetThreadRepliesTool,
+  handleSlackGetChannelHistory,
+  handleSlackGetThreadReplies,
   handleSlackListChannels,
   handleSlackPostMessage,
   handleSlackUserConversations,
-  handleSlackGetChannelHistory,
-  handleSlackGetThreadReplies,
+  slackGetChannelHistoryTool,
+  slackGetThreadRepliesTool,
+  slackListChannelsTool,
+  slackPostMessageTool,
+  slackUserConversationsTool,
 } from "./slack-tools.ts";
 import {
-  getGitHubRepoInfoTool,
-  getGitHubRepoContentsTool,
-  getGitHubIssuesTool,
   getGitHubCommitsTool,
+  getGitHubIssuesTool,
   getGitHubPullRequestsTool,
+  getGitHubRepoContentsTool,
+  getGitHubRepoInfoTool,
   getGitHubUserInfoTool,
-  handleGetGitHubRepoInfo,
-  handleGetGitHubRepoContents,
-  handleGetGitHubIssues,
   handleGetGitHubCommits,
+  handleGetGitHubIssues,
   handleGetGitHubPullRequests,
+  handleGetGitHubRepoContents,
+  handleGetGitHubRepoInfo,
   handleGetGitHubUserInfo,
 } from "./github-tools.ts";
 import {
-  getJiraProjectInfoTool,
   getJiraIssueTool,
-  searchJiraIssuesTool,
+  getJiraProjectInfoTool,
   getJiraProjectIssuesTool,
-  handleGetJiraProjectInfo,
   handleGetJiraIssue,
-  handleSearchJiraIssues,
+  handleGetJiraProjectInfo,
   handleGetJiraProjectIssues,
+  handleSearchJiraIssues,
+  searchJiraIssuesTool,
 } from "./jira-tools.ts";
 import {
-  mapGitHubPrToJiraIssuesTool,
   generateDashboardSummaryTool,
-  handleMapGitHubPrToJiraIssues,
   handleGenerateDashboardSummary,
+  handleMapGitHubPrToJiraIssues,
+  mapGitHubPrToJiraIssuesTool,
 } from "./integration-tools.ts";
 import { Tool } from "npm:@modelcontextprotocol/sdk@1.5.0/types.js";
 
@@ -89,37 +89,32 @@ export const TOOLS: Tool[] = [
 
 // ツールハンドラーのエクスポート
 export {
-  // 文字列ツールハンドラー
-  handleGetStringLength,
-
+  handleGenerateDashboardSummary,
+  handleGetGitHubCommits,
+  handleGetGitHubIssues,
+  handleGetGitHubPullRequests,
+  handleGetGitHubRepoContents,
   // GitHubツールハンドラー
   handleGetGitHubRepoInfo,
-  handleGetGitHubRepoContents,
-  handleGetGitHubIssues,
-  handleGetGitHubCommits,
-  handleGetGitHubPullRequests,
   handleGetGitHubUserInfo,
-
+  handleGetJiraIssue,
   // JIRAツールハンドラー
   handleGetJiraProjectInfo,
-  handleGetJiraIssue,
-  handleSearchJiraIssues,
   handleGetJiraProjectIssues,
-
+  // 文字列ツールハンドラー
+  handleGetStringLength,
+  handleGoogleCalendarCreateEvent,
+  // Google Calendarツールハンドラー
+  handleGoogleCalendarGetEvents,
   // 統合ツールハンドラー
   handleMapGitHubPrToJiraIssues,
-  handleGenerateDashboardSummary,
-
+  handleSearchJiraIssues,
+  handleSlackGetChannelHistory,
+  handleSlackGetThreadReplies,
   // Slackツールハンドラー
   handleSlackListChannels,
   handleSlackPostMessage,
   handleSlackUserConversations,
-  handleSlackGetChannelHistory,
-  handleSlackGetThreadReplies,
-
-  // Google Calendarツールハンドラー
-  handleGoogleCalendarGetEvents,
-  handleGoogleCalendarCreateEvent,
 };
 
 // ツール名とハンドラーのマッピング

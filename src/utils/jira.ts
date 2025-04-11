@@ -26,7 +26,7 @@ export function createJiraApiHeaders(): Record<string, string> {
     console.error(`[JIRA API] ${jiraEmail} でアクセスします (${jiraBaseUrl})`);
   } else {
     console.error(
-      `[JIRA API] 認証情報が不足しています。JIRA_EMAIL と JIRA_API_TOKEN を設定してください。`
+      `[JIRA API] 認証情報が不足しています。JIRA_EMAIL と JIRA_API_TOKEN を設定してください。`,
     );
   }
 

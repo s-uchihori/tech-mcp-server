@@ -2,7 +2,8 @@
 
 ## Deno のインストール
 
-Deno は、JavaScript と TypeScript のためのセキュアなランタイムです。以下の方法でインストールできます。
+Deno は、JavaScript と TypeScript
+のためのセキュアなランタイムです。以下の方法でインストールできます。
 
 ### macOS / Linux
 
@@ -12,7 +13,8 @@ Deno は、JavaScript と TypeScript のためのセキュアなランタイム�
 curl -fsSL https://deno.land/install.sh | sh
 ```
 
-インストール後、以下のコマンドをシェルの設定ファイル（.bashrc、.zshrc など）に追加してください：
+インストール後、以下のコマンドをシェルの設定ファイル（.bashrc、.zshrc
+など）に追加してください：
 
 ```bash
 export DENO_INSTALL="$HOME/.deno"
@@ -81,7 +83,8 @@ deno task test
 
 ### パーミッションエラー
 
-Deno はセキュリティのため、明示的な権限が必要です。権限エラーが発生した場合は、必要な権限フラグを追加してください：
+Deno
+はセキュリティのため、明示的な権限が必要です。権限エラーが発生した場合は、必要な権限フラグを追加してください：
 
 - ネットワークアクセス: `--allow-net`
 - ファイルシステムアクセス: `--allow-read`, `--allow-write`

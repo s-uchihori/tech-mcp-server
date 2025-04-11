@@ -7,10 +7,10 @@ import {
   McpError,
 } from "npm:@modelcontextprotocol/sdk@1.5.0/types.js";
 import {
-  JiraProjectArgs,
   JiraIssueArgs,
-  JiraSearchArgs,
+  JiraProjectArgs,
   JiraProjectIssuesArgs,
+  JiraSearchArgs,
   ToolResponse,
 } from "../types.ts";
 import {
@@ -209,7 +209,7 @@ function addPaginationInfo(
   startAt: number,
   maxResults: number,
   total: number,
-  includePagination: boolean = false
+  includePagination: boolean = false,
 ): any {
   if (!includePagination) {
     return data;
@@ -240,13 +240,13 @@ interface CommonOptions {
 
 // 引数の検証
 function validateJiraProjectArgs(
-  args: unknown
+  args: unknown,
 ): asserts args is JiraProjectArgs {
   const typedArgs = args as JiraProjectArgs;
   if (typeof typedArgs.projectKey !== "string") {
     throw new McpError(
       ErrorCode.InvalidParams,
-      `Expected projectKey to be a string`
+      `Expected projectKey to be a string`,
     );
   }
 }
@@ -256,7 +256,7 @@ function validateJiraIssueArgs(args: unknown): asserts args is JiraIssueArgs {
   if (typeof typedArgs.issueKey !== "string") {
     throw new McpError(
       ErrorCode.InvalidParams,
-      `Expected issueKey to be a string`
+      `Expected issueKey to be a string`,
     );
   }
 }
@@ -270,7 +270,7 @@ function validateJiraSearchArgs(args: unknown): asserts args is JiraSearchArgs {
 
 // JIRA プロジェクト情報取得ツールの実装
 export async function handleGetJiraProjectInfo(
-  args: unknown
+  args: unknown,
 ): Promise<ToolResponse> {
   validateJiraProjectArgs(args);
   const typedArgs = args as JiraProjectArgs & CommonOptions;
@@ -283,7 +283,7 @@ export async function handleGetJiraProjectInfo(
 
   if (verbose) {
     console.error(
-      `[getJiraProjectInfo] プロジェクト情報を取得中: ${projectKey}`
+      `[getJiraProjectInfo] プロジェクト情報を取得中: ${projectKey}`,
     );
   }
 
@@ -300,7 +300,7 @@ export async function handleGetJiraProjectInfo(
     if (!response.ok) {
       const errorText = await response.text();
       const error = new Error(
-        `JIRA API error: ${response.status} ${response.statusText}`
+        `JIRA API error: ${response.status} ${response.statusText}`,
       );
       (error as any).response = {
         status: response.status,
@@ -319,7 +319,7 @@ export async function handleGetJiraProjectInfo(
 
     if (verbose) {
       console.error(
-        `[getJiraProjectInfo] 成功: プロジェクト情報を取得しました`
+        `[getJiraProjectInfo] 成功: プロジェクト情報を取得しました`,
       );
     }
 
@@ -365,7 +365,7 @@ export async function handleGetJiraIssue(args: unknown): Promise<ToolResponse> {
     if (!response.ok) {
       const errorText = await response.text();
       const error = new Error(
-        `JIRA API error: ${response.status} ${response.statusText}`
+        `JIRA API error: ${response.status} ${response.statusText}`,
       );
       (error as any).response = {
         status: response.status,
@@ -402,7 +402,7 @@ export async function handleGetJiraIssue(args: unknown): Promise<ToolResponse> {
 
 // JIRA チケット検索ツールの実装
 export async function handleSearchJiraIssues(
-  args: unknown
+  args: unknown,
 ): Promise<ToolResponse> {
   validateJiraSearchArgs(args);
   const typedArgs = args as JiraSearchArgs & CommonOptions;
@@ -413,13 +413,14 @@ export async function handleSearchJiraIssues(
     include_pagination = false,
     verbose = false,
   } = typedArgs;
-  const maxResults =
-    typeof typedArgs.maxResults === "number" ? typedArgs.maxResults : 50;
+  const maxResults = typeof typedArgs.maxResults === "number"
+    ? typedArgs.maxResults
+    : 50;
   const fields = Array.isArray(typedArgs.fields) ? typedArgs.fields : undefined;
 
   if (verbose) {
     console.error(
-      `[searchJiraIssues] JQLで検索中: ${jql} (maxResults: ${maxResults})`
+      `[searchJiraIssues] JQLで検索中: ${jql} (maxResults: ${maxResults})`,
     );
   }
 
@@ -447,7 +448,7 @@ export async function handleSearchJiraIssues(
     if (!response.ok) {
       const errorText = await response.text();
       const error = new Error(
-        `JIRA API error: ${response.status} ${response.statusText}`
+        `JIRA API error: ${response.status} ${response.statusText}`,
       );
       (error as any).response = {
         status: response.status,
@@ -471,13 +472,13 @@ export async function handleSearchJiraIssues(
         0,
         maxResults,
         data.total,
-        include_pagination
+        include_pagination,
       );
     }
 
     if (verbose) {
       console.error(
-        `[searchJiraIssues] 成功: ${data.total}件のチケットが見つかりました`
+        `[searchJiraIssues] 成功: ${data.total}件のチケットが見つかりました`,
       );
     }
 
@@ -497,7 +498,7 @@ export async function handleSearchJiraIssues(
 
 // JIRA プロジェクトのチケット一覧取得ツールの実装
 export async function handleGetJiraProjectIssues(
-  args: unknown
+  args: unknown,
 ): Promise<ToolResponse> {
   validateJiraProjectArgs(args);
   const typedArgs = args as JiraProjectIssuesArgs & CommonOptions;
@@ -508,10 +509,12 @@ export async function handleGetJiraProjectIssues(
     include_pagination = false,
     verbose = false,
   } = typedArgs;
-  const status =
-    typeof typedArgs.status === "string" ? typedArgs.status : undefined;
-  const maxResults =
-    typeof typedArgs.maxResults === "number" ? typedArgs.maxResults : 50;
+  const status = typeof typedArgs.status === "string"
+    ? typedArgs.status
+    : undefined;
+  const maxResults = typeof typedArgs.maxResults === "number"
+    ? typedArgs.maxResults
+    : 50;
 
   // JQLクエリの構築
   let jql = `project = ${projectKey}`;
@@ -524,7 +527,7 @@ export async function handleGetJiraProjectIssues(
     console.error(
       `[getJiraProjectIssues] プロジェクトのチケットを取得中: ${projectKey} (status: ${
         status || "すべて"
-      }, maxResults: ${maxResults})`
+      }, maxResults: ${maxResults})`,
     );
   }
 
@@ -552,7 +555,7 @@ export async function handleGetJiraProjectIssues(
     if (!response.ok) {
       const errorText = await response.text();
       const error = new Error(
-        `JIRA API error: ${response.status} ${response.statusText}`
+        `JIRA API error: ${response.status} ${response.statusText}`,
       );
       (error as any).response = {
         status: response.status,
@@ -576,13 +579,13 @@ export async function handleGetJiraProjectIssues(
         0,
         maxResults,
         data.total,
-        include_pagination
+        include_pagination,
       );
     }
 
     if (verbose) {
       console.error(
-        `[getJiraProjectIssues] 成功: ${data.total}件のチケットが見つかりました`
+        `[getJiraProjectIssues] 成功: ${data.total}件のチケットが見つかりました`,
       );
     }
 

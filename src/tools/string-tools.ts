@@ -32,7 +32,7 @@ export async function handleGetStringLength(args: unknown): Promise<{
   if (typeof input !== "string") {
     throw new McpError(
       ErrorCode.InvalidParams,
-      `Expected input to be a string, got ${typeof input}`
+      `Expected input to be a string, got ${typeof input}`,
     );
   }
 

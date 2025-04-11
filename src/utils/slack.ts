@@ -43,7 +43,7 @@ export class SlackClient {
     console.error(`[SlackClient] チャンネル一覧を取得します (limit=${limit})`);
     const response = await fetch(
       `https://slack.com/api/conversations.list?${params}`,
-      { headers: this.botHeaders }
+      { headers: this.botHeaders },
     );
 
     return response.json();
@@ -59,7 +59,7 @@ export class SlackClient {
   async getUserConversations(
     user_id: string,
     limit: number = 100,
-    cursor?: string
+    cursor?: string,
   ): Promise<any> {
     const params = new URLSearchParams({
       types: "public_channel",
@@ -78,11 +78,11 @@ export class SlackClient {
     }
 
     console.error(
-      `[SlackClient] ユーザー(${user_id})のチャンネル一覧を取得します (limit=${limit})`
+      `[SlackClient] ユーザー(${user_id})のチャンネル一覧を取得します (limit=${limit})`,
     );
     const response = await fetch(
       `https://slack.com/api/users.conversations?${params}`,
-      { headers: this.botHeaders }
+      { headers: this.botHeaders },
     );
 
     return response.json();
@@ -96,7 +96,7 @@ export class SlackClient {
    */
   async postMessage(channel_id: string, text: string): Promise<any> {
     console.error(
-      `[SlackClient] メッセージを投稿します (channel=${channel_id})`
+      `[SlackClient] メッセージを投稿します (channel=${channel_id})`,
     );
     const response = await fetch("https://slack.com/api/chat.postMessage", {
       method: "POST",
@@ -128,7 +128,7 @@ export class SlackClient {
       console.error(
         `[SlackClient] チャンネル一覧の取得に失敗しました: ${
           response.error || "Unknown error"
-        }`
+        }`,
       );
       return null;
     }
@@ -137,12 +137,12 @@ export class SlackClient {
     const channel = response.channels.find(
       (ch: any) =>
         ch.name === normalizedChannelName ||
-        ch.name_normalized === normalizedChannelName
+        ch.name_normalized === normalizedChannelName,
     );
 
     if (!channel) {
       console.error(
-        `[SlackClient] チャンネル「${normalizedChannelName}」が見つかりませんでした`
+        `[SlackClient] チャンネル「${normalizedChannelName}」が見つかりませんでした`,
       );
       return null;
     }
@@ -160,7 +160,7 @@ export class SlackClient {
   async getChannelHistory(
     channel_id: string,
     limit: number = 10,
-    cursor?: string
+    cursor?: string,
   ): Promise<any> {
     const params = new URLSearchParams({
       channel: channel_id,
@@ -172,11 +172,11 @@ export class SlackClient {
     }
 
     console.error(
-      `[SlackClient] チャンネル(${channel_id})の会話履歴を取得します (limit=${limit})`
+      `[SlackClient] チャンネル(${channel_id})の会話履歴を取得します (limit=${limit})`,
     );
     const response = await fetch(
       `https://slack.com/api/conversations.history?${params}`,
-      { headers: this.botHeaders }
+      { headers: this.botHeaders },
     );
 
     return response.json();
@@ -192,7 +192,7 @@ export class SlackClient {
   async getChannelHistoryByName(
     channel_name: string,
     limit: number = 10,
-    cursor?: string
+    cursor?: string,
   ): Promise<any> {
     const channelId = await this.getChannelIdByName(channel_name);
 
@@ -216,7 +216,7 @@ export class SlackClient {
   async getThreadReplies(
     channel_id: string,
     thread_ts: string,
-    limit: number = 10
+    limit: number = 10,
   ): Promise<any> {
     const params = new URLSearchParams({
       channel: channel_id,
@@ -225,11 +225,11 @@ export class SlackClient {
     });
 
     console.error(
-      `[SlackClient] スレッド(${thread_ts})の返信を取得します (channel=${channel_id}, limit=${limit})`
+      `[SlackClient] スレッド(${thread_ts})の返信を取得します (channel=${channel_id}, limit=${limit})`,
     );
     const response = await fetch(
       `https://slack.com/api/conversations.replies?${params}`,
-      { headers: this.botHeaders }
+      { headers: this.botHeaders },
     );
 
     return response.json();
@@ -245,7 +245,7 @@ export class SlackClient {
   async getThreadRepliesByChannelName(
     channel_name: string,
     thread_ts: string,
-    limit: number = 10
+    limit: number = 10,
   ): Promise<any> {
     const channelId = await this.getChannelIdByName(channel_name);
 

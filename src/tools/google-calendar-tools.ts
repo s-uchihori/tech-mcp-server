@@ -7,8 +7,8 @@ import {
   McpError,
 } from "npm:@modelcontextprotocol/sdk@1.5.0/types.js";
 import {
-  GoogleCalendarEventArgs,
   GoogleCalendarCreateEventArgs,
+  GoogleCalendarEventArgs,
 } from "../types.ts";
 import { getGoogleCalendarClient } from "../utils/google-calendar.ts";
 
@@ -255,13 +255,13 @@ export async function handleGoogleCalendarGetEvents(args: unknown): Promise<{
       typedArgs.maxResults || 10,
       typedArgs.q,
       typedArgs.singleEvents !== false, // デフォルトでtrue
-      typedArgs.orderBy || "startTime"
+      typedArgs.orderBy || "startTime",
     );
 
     console.error(
       `[google_calendar_get_events] イベントを取得しました (${
         response.items?.length ?? 0
-      }件)`
+      }件)`,
     );
 
     // イベントのフィルタリングと加工
@@ -275,7 +275,7 @@ export async function handleGoogleCalendarGetEvents(args: unknown): Promise<{
       });
 
       console.error(
-        `[google_calendar_get_events] 参加者フィルタリング: ${filteredItems.length}件のイベントが該当`
+        `[google_calendar_get_events] 参加者フィルタリング: ${filteredItems.length}件のイベントが該当`,
       );
     }
 
@@ -319,7 +319,7 @@ export async function handleGoogleCalendarGetEvents(args: unknown): Promise<{
     };
   } catch (error) {
     console.error(
-      `[ERROR] ${error instanceof Error ? error.message : String(error)}`
+      `[ERROR] ${error instanceof Error ? error.message : String(error)}`,
     );
 
     return {
@@ -351,7 +351,7 @@ export async function handleGoogleCalendarCreateEvent(args: unknown): Promise<{
     if (!typedArgs.summary || !typedArgs.start || !typedArgs.end) {
       throw new McpError(
         ErrorCode.InvalidParams,
-        "Missing required arguments: summary, start, and end"
+        "Missing required arguments: summary, start, and end",
       );
     }
 
@@ -371,11 +371,11 @@ export async function handleGoogleCalendarCreateEvent(args: unknown): Promise<{
     const calendarClient = getGoogleCalendarClient();
     const response = await calendarClient.createEvent(
       eventData,
-      typedArgs.calendarId || "primary"
+      typedArgs.calendarId || "primary",
     );
 
     console.error(
-      `[google_calendar_create_event] イベントを作成しました (id=${response.id})`
+      `[google_calendar_create_event] イベントを作成しました (id=${response.id})`,
     );
 
     return {
@@ -389,7 +389,7 @@ export async function handleGoogleCalendarCreateEvent(args: unknown): Promise<{
     };
   } catch (error) {
     console.error(
-      `[ERROR] ${error instanceof Error ? error.message : String(error)}`
+      `[ERROR] ${error instanceof Error ? error.message : String(error)}`,
     );
 
     return {

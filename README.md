@@ -1,11 +1,15 @@
 # Tech MCP サーバー
 
-これは、Claude、CursorやRoo Code のための MCP サーバーです。このサーバーは、基本的なツールを提供します。
+これは、Claude、CursorやRoo Code のための MCP
+サーバーです。このサーバーは、基本的なツールを提供します。
 
 ## 前提条件
 
 - [Deno](https://deno.com/) がインストールされていること
-- Denoの環境構築は[DENO_SETUP.md](https://github.com/taka-ganasu/roo-mcp-server/blob/main/DENO_SETUP.md) と [VSCODE_DENO_SETUP.md](https://github.com/taka-ganasu/roo-mcp-server/blob/main/VSCODE_DENO_SETUP.md) を参照
+- Denoの環境構築は[DENO_SETUP.md](https://github.com/taka-ganasu/roo-mcp-server/blob/main/DENO_SETUP.md)
+  と
+  [VSCODE_DENO_SETUP.md](https://github.com/taka-ganasu/roo-mcp-server/blob/main/VSCODE_DENO_SETUP.md)
+  を参照
 
 ## 起動方法
 
@@ -33,7 +37,8 @@ deno task test
 ### GitHub 関連ツール
 
 - getGitHubRepoInfo - GitHub リポジトリの情報を取得するツール
-- getGitHubRepoContents - GitHub リポジトリのコンテンツ（ファイルやディレクトリ）を取得するツール
+- getGitHubRepoContents - GitHub
+  リポジトリのコンテンツ（ファイルやディレクトリ）を取得するツール
 - getGitHubIssues - GitHub リポジトリのイシューを取得するツール
 - getGitHubCommits - GitHub リポジトリのコミット履歴を取得するツール
 - getGitHubPullRequests - GitHub リポジトリのプルリクエストを取得するツール
@@ -50,19 +55,23 @@ deno task test
 
 - slack_list_channels - Slack ワークスペースの公開チャンネル一覧を取得するツール
 - slack_post_message - Slack チャンネルに新しいメッセージを投稿するツール
-- slack_user_conversations - ユーザーがメンバーになっているチャンネル一覧を取得するツール
+- slack_user_conversations -
+  ユーザーがメンバーになっているチャンネル一覧を取得するツール
 - slack_get_channel_history - チャンネル名から会話履歴を取得するツール
-- slack_get_thread_replies - チャンネル名とスレッドタイムスタンプからスレッド返信を取得するツール
+- slack_get_thread_replies -
+  チャンネル名とスレッドタイムスタンプからスレッド返信を取得するツール
 
 ### インテグレーションツール
 
-- mapGitHubPrToJiraIssues - GitHub のプルリクエストと JIRA チケットをマッピングするツール
+- mapGitHubPrToJiraIssues - GitHub のプルリクエストと JIRA
+  チケットをマッピングするツール
 - generateDashboardSummary - 開発状況のダッシュボードサマリーを生成するツール
 
 ## Roo Code への登録方法
 
 1. サーバーを起動します: `deno task start`
-2. Roo Cline の設定ファイルを編集します: `~/Library/Application Support/Code/User/globalStorage/rooveterinaryinc.roo-cline/settings/cline_mcp_settings.json`
+2. Roo Cline の設定ファイルを編集します:
+   `~/Library/Application Support/Code/User/globalStorage/rooveterinaryinc.roo-cline/settings/cline_mcp_settings.json`
 3. 以下の設定を追加します:
 4. env は@aka-ganasu から受け取ること
 

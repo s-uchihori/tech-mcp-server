@@ -54,7 +54,7 @@ export class GoogleCalendarClient {
 
     if (!tokenResponse.ok || !tokenData.access_token) {
       throw new Error(
-        `トークン更新エラー: ${tokenData.error || "Unknown error"}`
+        `トークン更新エラー: ${tokenData.error || "Unknown error"}`,
       );
     }
 
@@ -77,7 +77,7 @@ export class GoogleCalendarClient {
   private async request(
     endpoint: string,
     method: string = "GET",
-    body?: any
+    body?: any,
   ): Promise<any> {
     const token = await this.getAccessToken();
     const headers: HeadersInit = {
@@ -96,14 +96,14 @@ export class GoogleCalendarClient {
 
     const response = await fetch(
       `https://www.googleapis.com/calendar/v3${endpoint}`,
-      options
+      options,
     );
 
     const data = await response.json();
 
     if (!response.ok) {
       throw new Error(
-        `Google Calendar API エラー: ${data.error?.message || "Unknown error"}`
+        `Google Calendar API エラー: ${data.error?.message || "Unknown error"}`,
       );
     }
 
@@ -128,7 +128,7 @@ export class GoogleCalendarClient {
     maxResults: number = 10,
     q?: string,
     singleEvents: boolean = true,
-    orderBy: string = "startTime"
+    orderBy: string = "startTime",
   ): Promise<any> {
     const params = new URLSearchParams();
 
@@ -140,11 +140,11 @@ export class GoogleCalendarClient {
     if (orderBy) params.append("orderBy", orderBy);
 
     console.error(
-      `[GoogleCalendarClient] イベントを取得します (calendarId=${calendarId}, maxResults=${maxResults})`
+      `[GoogleCalendarClient] イベントを取得します (calendarId=${calendarId}, maxResults=${maxResults})`,
     );
 
     return this.request(
-      `/calendars/${encodeURIComponent(calendarId)}/events?${params}`
+      `/calendars/${encodeURIComponent(calendarId)}/events?${params}`,
     );
   }
 
@@ -156,13 +156,13 @@ export class GoogleCalendarClient {
    */
   async createEvent(event: any, calendarId: string = "primary"): Promise<any> {
     console.error(
-      `[GoogleCalendarClient] イベントを作成します (calendarId=${calendarId}, summary=${event.summary})`
+      `[GoogleCalendarClient] イベントを作成します (calendarId=${calendarId}, summary=${event.summary})`,
     );
 
     return this.request(
       `/calendars/${encodeURIComponent(calendarId)}/events`,
       "POST",
-      event
+      event,
     );
   }
 
@@ -191,14 +191,14 @@ export function getGoogleCalendarClient(): GoogleCalendarClient {
 
     if (!clientId || !clientSecret || !refreshToken) {
       throw new Error(
-        "Google Calendar API用の環境変数が設定されていません（GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REFRESH_TOKEN）"
+        "Google Calendar API用の環境変数が設定されていません（GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REFRESH_TOKEN）",
       );
     }
 
     googleCalendarClientInstance = new GoogleCalendarClient(
       clientId,
       clientSecret,
-      refreshToken
+      refreshToken,
     );
   }
 
