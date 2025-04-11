@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { Server } from "npm:@modelcontextprotocol/sdk@1.5.0/server/index.js";
 import { StdioServerTransport } from "npm:@modelcontextprotocol/sdk@1.5.0/server/stdio.js";
 import {
